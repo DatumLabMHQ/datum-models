@@ -60,3 +60,4 @@ dbt build --profiles-dir . --target dev       # builds and tests every model
   way of computing the metric exists.
 - A failing test on a mart blocks the mart from updating; the previous rows stay.
 - Units follow `datum-context/house/units.md`: USD as doubles, percent as numbers, UTC.
+
