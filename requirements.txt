@@ -1,0 +1,4 @@
+dbt-core<2
+dbt-postgres<2
+psycopg2-binary
+pyyaml

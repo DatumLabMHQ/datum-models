@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -q "dbt-core<2" "dbt-postgres<2" psycopg2-binary
+      - run: pip install -q -r requirements.txt
       - name: Migrate
         run: python scripts/migrate.py
 
