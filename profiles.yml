@@ -1,10 +1,11 @@
 # Connection comes from the environment, never from this file.
-# Local:  set -a; . ~/.config/datum/.env; set +a
+# Local:  set -a; . ~/.config/datum/.env; set +a; eval "$(python scripts/pgenv.py)"
 # CI:     DATABASE_URL secret on the repo.
+# Targets: dev (schemas dev_*), ci (schemas ci_<run>_*), prod (schemas sui, morpho, rwa).
 datum:
   target: "{{ env_var('DBT_TARGET', 'dev') }}"
-  outputs:
-    dev:
+  outputs: &outputs
+    dev: &conn
       type: postgres
       host: "{{ env_var('PGHOST') }}"
       user: "{{ env_var('PGUSER') }}"
@@ -15,14 +16,5 @@ datum:
       threads: 4
       sslmode: require
       connect_timeout: 30
-    prod:
-      type: postgres
-      host: "{{ env_var('PGHOST') }}"
-      user: "{{ env_var('PGUSER') }}"
-      password: "{{ env_var('PGPASSWORD') }}"
-      port: "{{ env_var('PGPORT', '5432') | int }}"
-      dbname: "{{ env_var('PGDATABASE') }}"
-      schema: public
-      threads: 4
-      sslmode: require
-      connect_timeout: 30
+    ci: *conn
+    prod: *conn

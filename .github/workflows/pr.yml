@@ -1,0 +1,33 @@
+name: pr
+# Every pull request builds the whole project into throwaway ci_<run>_* schemas against the
+# real raw data, runs every test, and drops the schemas afterwards. Nothing in prod changes.
+on:
+  pull_request:
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DBT_TARGET: ci
+      CI_RUN_ID: ${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -q -r requirements.txt
+      - name: Migrations apply cleanly (dry check of new files)
+        run: python scripts/migrate.py --check
+      - name: dbt build into ci schemas
+        run: |
+          eval "$(python scripts/pgenv.py)"
+          dbt deps --profiles-dir .
+          dbt build --profiles-dir . --target ci
+      - name: Drop ci schemas
+        if: always()
+        run: python scripts/drop_ci_schemas.py "$CI_RUN_ID"

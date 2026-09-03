@@ -14,9 +14,9 @@ models:
         tests: [not_null]
       - name: utilization
         tests:
-          - dbt_utils_placeholder_range:
-              min: 0
-              max: 100.5
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100.5
               where: "is_lending_pool"
 
   - name: stg_sui__liquidations
@@ -30,28 +30,28 @@ models:
 
   - name: stg_sui__defillama_tvl
     tests:
-      - unique_combination:
-          columns: [protocol, day]
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [protocol, day]
     columns:
       - name: tvl_usd
         tests: [not_null]
 
   - name: int_sui__pool_daily
     tests:
-      - unique_combination:
-          columns: [protocol, symbol, day]
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [protocol, symbol, day]
 
   - name: dim_sui_pools
     description: One row per pool ever seen.
     tests:
-      - unique_combination:
-          columns: [protocol, symbol]
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [protocol, symbol]
 
   - name: fct_sui_pool_daily
     description: One row per protocol, pool, UTC day. Units per datum-context/house/units.md.
     tests:
-      - unique_combination:
-          columns: [protocol, symbol, day]
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [protocol, symbol, day]
     columns:
       - name: total_supply_usd
         tests:
@@ -60,22 +60,22 @@ models:
       - name: utilization
         description: Percent 0..100. Above 100 fails the publish gate.
         tests:
-          - dbt_utils_placeholder_range:
-              min: 0
-              max: 100.5
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100.5
               where: "is_lending_pool"
       - name: supply_apy
         description: Percent as a number, base interest only.
       - name: ltv
         description: Percent 0..100.
         tests:
-          - dbt_utils_placeholder_range: {min: 0, max: 100}
+          - dbt_utils.accepted_range: {min_value: 0, max_value: 100}
 
   - name: fct_sui_protocol_tvl_daily
     description: Net and gross TVL per protocol per day with the method (net or remote) recorded. Definition in datum-context/metrics/tvl-net.md.
     tests:
-      - unique_combination:
-          columns: [protocol, day]
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [protocol, day]
     columns:
       - name: method
         tests:
@@ -83,7 +83,7 @@ models:
       - name: tvl_net_usd
         tests:
           - not_null
-          - dbt_utils_placeholder_range: {min: 0, max: 100000000000}
+          - dbt_utils.accepted_range: {min_value: 0, max_value: 100000000000}
 
   - name: fct_sui_liquidations
     description: One row per liquidation event.
@@ -92,4 +92,4 @@ models:
         tests: [unique, not_null]
       - name: collateral_usd
         tests:
-          - dbt_utils_placeholder_range: {min: 0, max: 1000000000}
+          - dbt_utils.accepted_range: {min_value: 0, max_value: 1000000000}

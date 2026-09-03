@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: sui_raw
     schema: sui
-    description: Raw layer for Sui lending, filled by SuiLending/scripts/platform-ingest.ts. Append-only.
+    description: Raw layer for Sui lending, filled by the pinned SuiLending platform-ingest script. Append-only; every row carries run_id, source_id and fetched_at.
     tables:
       - name: raw_pool_snapshots
         description: One row per pool per ingest run, exactly as the adapter returned it plus provenance.
@@ -16,7 +16,7 @@ sources:
         freshness:
           warn_after: {count: 26, period: hour}
       - name: raw_defillama_tvl
-        description: DefiLlama daily TVL per protocol on Sui, the reconciliation series.
+        description: DefiLlama daily TVL per protocol on Sui, versioned by run. Staging keeps the latest fetch per day.
         loaded_at_field: fetched_at
         freshness:
           warn_after: {count: 36, period: hour}

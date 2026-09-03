@@ -1,5 +1,6 @@
 name: hourly
-# Migrate, ingest, build and test. Every step logs to ops.sync_runs.
+# Migrate, ingest, build, test, health. Fails loudly (GitHub emails the owner) when a job errored,
+# a source is stale, or tests fail. Every step logs to ops.sync_runs.
 on:
   schedule:
     - cron: "15 * * * *"
@@ -24,11 +25,13 @@ jobs:
       - name: Migrate
         run: python scripts/migrate.py
 
-      # The Sui adapters live in the SuiLending repo; the platform ingest script runs them
-      # and writes to the raw layer here. Nothing in the live dashboard changes.
+      - name: Resolve pinned SuiLending ref
+        id: ref
+        run: echo "ref=$(cat ingest/sui/SOURCE_REF)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
           repository: DatumLabMHQ/SuiLending
+          ref: ${{ steps.ref.outputs.ref }}
           path: _sui
       - uses: actions/setup-node@v4
         with:
@@ -41,17 +44,31 @@ jobs:
           SUI_GRPC_BEARER: ${{ secrets.SUI_GRPC_BEARER }}
         run: |
           npm ci --no-audit --no-fund --silent
-          npx tsx scripts/platform-ingest.ts || echo "::warning::one or more Sui ingest jobs failed (see ops.sync_runs)"
+          npx tsx scripts/platform-ingest.ts || echo "::warning::one or more Sui ingest jobs failed; the health gate below will fail the run"
 
       - name: dbt build
         run: |
           eval "$(python scripts/pgenv.py)"
+          dbt deps --profiles-dir .
           dbt build --profiles-dir . --target prod
       - name: Source freshness
-        if: always()
         run: |
           eval "$(python scripts/pgenv.py)"
-          dbt source freshness --profiles-dir . --target prod || echo "::warning::a source is stale"
+          dbt source freshness --profiles-dir . --target prod
       - name: Record run
         if: always()
         run: python scripts/record_run.py --job dbt.build --status "${{ job.status }}" --runner github-actions
+      - name: Docs and lineage
+        if: always()
+        run: |
+          eval "$(python scripts/pgenv.py)"
+          dbt docs generate --profiles-dir . --target prod --static
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbt-docs
+          path: target/static_index.html
+          retention-days: 14
+      - name: Health gate
+        if: always()
+        run: python scripts/health.py --window-hours 2

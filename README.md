@@ -23,6 +23,25 @@ wins and the model is a bug.
 | `scripts/` | Operational helpers: migrate, health, backfill. |
 | `.github/workflows/` | The hourly run: migrate, ingest, `dbt build`, health. |
 
+## Environments
+
+| Target | Schemas | Who |
+|---|---|---|
+| `prod` | `sui`, `morpho`, `rwa` | the hourly workflow only |
+| `dev` | `dev_sui`, ... | a developer's local `dbt build` |
+| `ci` | `ci_<run>_sui`, ... | every pull request, dropped after the build |
+
+Raw tables always live in the prod schema and are read by every environment. Neon branches are
+the next step for full data isolation once a Neon API key is available to CI.
+
+## Review gate
+
+Every pull request builds the whole project into throwaway schemas against real raw data and
+runs every test (`.github/workflows/pr.yml`). The hourly run fails loudly (GitHub emails the
+owner) when any ingest job errored, a source is past its expected cadence, or a test fails
+(`scripts/health.py`). Lineage and docs are generated on every hourly run and attached as the
+`dbt-docs` artifact.
+
 ## Running locally
 
 ```
