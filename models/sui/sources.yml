@@ -1,0 +1,22 @@
+version: 2
+sources:
+  - name: sui_raw
+    schema: sui
+    description: Raw layer for Sui lending, filled by SuiLending/scripts/platform-ingest.ts. Append-only.
+    tables:
+      - name: raw_pool_snapshots
+        description: One row per pool per ingest run, exactly as the adapter returned it plus provenance.
+        loaded_at_field: fetched_at
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 50, period: hour}
+      - name: raw_liquidation_events
+        description: One row per liquidation event, keyed by txDigest:eventSeq.
+        loaded_at_field: fetched_at
+        freshness:
+          warn_after: {count: 26, period: hour}
+      - name: raw_defillama_tvl
+        description: DefiLlama daily TVL per protocol on Sui, the reconciliation series.
+        loaded_at_field: fetched_at
+        freshness:
+          warn_after: {count: 36, period: hour}
