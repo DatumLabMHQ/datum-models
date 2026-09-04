@@ -7,7 +7,10 @@ instances, recent investor transactions (deduped), and the API's own per-token h
 import argparse, os, sys, json, time, hashlib, datetime as dt
 import requests, psycopg2, psycopg2.extras
 
-API = 'https://api.centrifuge.io/'
+# api.centrifuge.io answers US-east callers (GitHub runners, Vercel iad1) with 520/524 on real queries.
+# CENTRIFUGE_API_URL can point at the keyed pass-through on the London Vercel deployment instead.
+API = os.environ.get('CENTRIFUGE_API_URL') or 'https://api.centrifuge.io/'
+HEADERS = {'x-proxy-key': os.environ['CENTRIFUGE_PROXY_KEY']} if os.environ.get('CENTRIFUGE_PROXY_KEY') else {}
 p = argparse.ArgumentParser()
 for x in ('pools', 'transactions', 'history'): p.add_argument(f'--{x}', action='store_true')
 a = p.parse_args(); ALL = not (a.pools or a.transactions or a.history)
@@ -20,7 +23,7 @@ def gql(query, variables, tries=4):
     last = None
     for i in range(tries):
         try:
-            r = requests.post(API, json={'query': query, 'variables': variables}, timeout=90); last = r
+            r = requests.post(API, json={'query': query, 'variables': variables}, headers=HEADERS, timeout=90); last = r
             if r.status_code == 200 and 'errors' not in r.json(): return r.json()['data']
         except requests.RequestException as e:
             last = e

@@ -62,6 +62,9 @@ jobs:
         run: python scripts/ingest_aave.py || echo "::warning::Aave ingest had failures (see ops.sync_runs)"
 
       - name: Ingest Centrifuge (pools, transactions, token history)
+        env:
+          CENTRIFUGE_API_URL: https://centrifuge-dashboard-datum.vercel.app/api/graph-proxy
+          CENTRIFUGE_PROXY_KEY: ${{ secrets.CENTRIFUGE_PROXY_KEY }}
         run: python scripts/ingest_centrifuge.py || echo "::warning::Centrifuge ingest had failures (see ops.sync_runs)"
 
       - name: dbt build
