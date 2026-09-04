@@ -16,6 +16,12 @@ models:
     +persist_docs:
       relation: true
       columns: true
+    rwa:
+      +schema: rwa
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
     sui:
       +schema: sui
       staging:

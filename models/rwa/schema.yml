@@ -1,0 +1,40 @@
+version: 2
+models:
+  - name: stg_rwa__market_history
+    description: Every 5-minute snapshot of RWA terminal totals, with day derived in UTC.
+  - name: stg_rwa__reserve_state_history
+    description: Every 5-minute snapshot per Horizon reserve; percent columns keep the worker's percent-as-number units.
+  - name: stg_rwa__morpho_market_history
+    description: Every 5-minute snapshot per Morpho RWA-collateral market.
+  - name: stg_rwa__asset_aum_history
+    description: AUM observations per tokenized asset joined to asset and issuer names.
+  - name: fct_rwa_totals_daily
+    description: Daily last-value totals for the RWA terminal. total_aum_usd counts every Horizon-listed reserve including stablecoins; rwa_aum_usd is the tokenized-RWA-only figure. See datum-context/products/rwa-terminal.md.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day]}
+    columns:
+      - {name: day, tests: [not_null]}
+      # total_aum includes the stablecoin reserves listed on Horizon (USDC alone is ~$51B), so it sits near $57B.
+      - {name: total_aum_usd, tests: [not_null, {dbt_utils.accepted_range: {min_value: 0, max_value: 1000000000000}}]}
+      # rwa_aum is the RWA-only figure (~$5B). Bounds mirror Setnel's rwa.aum-sanity rule (0.5B to 20B).
+      - {name: rwa_aum_usd, tests: [{dbt_utils.accepted_range: {min_value: 500000000, max_value: 20000000000}}]}
+  - name: fct_rwa_reserve_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, reserve]}
+    columns:
+      - {name: reserve, tests: [not_null]}
+      - {name: supplied_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
+      - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "utilization is not null"}}]}
+  - name: fct_rwa_morpho_market_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, market_id]}
+    columns:
+      - {name: market_id, tests: [not_null]}
+      - {name: collateral_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
+  - name: fct_rwa_asset_aum_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, asset_id]}
+    columns:
+      - {name: asset_id, tests: [not_null]}
+      # Stablecoins (USDC, GHO, RLUSD) are in this table too; USDC is ~$51B. Non-stablecoin rows are capped at $20B.
+      - {name: aum_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 500000000000}}, {dbt_utils.accepted_range: {min_value: 0, max_value: 20000000000, where: "ticker not in ('USDC','GHO','RLUSD')"}}]}

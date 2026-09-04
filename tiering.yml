@@ -18,3 +18,24 @@ tables:
   - product: sui
     table: sui.raw_defillama_tvl
     day_column: fetched_at
+  - product: rwa
+    table: rwa.raw_reserve_state_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_morpho_market_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_market_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_horizon_holder_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_asset_aum_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_asset_nav_history
+    day_column: ts
+  - product: rwa
+    table: rwa.raw_token_supply_history
+    day_column: ts

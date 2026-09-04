@@ -1,0 +1,26 @@
+version: 2
+sources:
+  - name: rwa_raw
+    schema: rwa
+    description: Raw layer for the RWA terminal, copied read-only from the legacy Neon database every hour (scripts/import_legacy_rwa.py) until the worker writes here directly.
+    tables:
+      - name: raw_market_history
+        loaded_at_field: ts
+        freshness: {warn_after: {count: 3, period: hour}, error_after: {count: 12, period: hour}}
+      - name: raw_reserve_state_history
+        loaded_at_field: ts
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_horizon_holder_history
+        loaded_at_field: ts
+      - name: raw_morpho_market_history
+        loaded_at_field: ts
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_morpho_risk_history
+      - name: raw_asset_aum_history
+        loaded_at_field: ts
+      - name: raw_asset_nav_history
+      - name: raw_token_supply_history
+      - name: raw_token_top_holders
+      - name: raw_asset
+      - name: raw_token
+      - name: raw_issuer

@@ -15,6 +15,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DBT_TARGET: prod
+      LEGACY_RWA_DATABASE_URL: ${{ secrets.LEGACY_RWA_DATABASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -45,6 +46,12 @@ jobs:
         run: |
           npm ci --no-audit --no-fund --silent
           npx tsx scripts/platform-ingest.ts || echo "::warning::one or more Sui ingest jobs failed; the health gate below will fail the run"
+
+      - name: Sync RWA history from the legacy database
+        if: env.LEGACY_RWA_DATABASE_URL != ''
+        env:
+          LEGACY_RWA_DATABASE_URL: ${{ secrets.LEGACY_RWA_DATABASE_URL }}
+        run: python scripts/import_legacy_rwa.py || echo "::warning::RWA legacy sync had failures (see ops.legacy_imports)"
 
       - name: dbt build
         run: |
