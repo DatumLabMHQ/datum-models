@@ -31,8 +31,28 @@ if not a.dry_run:
                       aws_access_key_id=os.environ[env['access_key_env']], aws_secret_access_key=os.environ[env['secret_key_env']], region_name='auto')
     bucket = os.environ[env['bucket_env']]
 
+import json, decimal
+def canon(v):
+    """One canonical text form for a value, identical whether it came from Postgres or from Parquet."""
+    if v is None: return ''
+    if isinstance(v, bool): return 'true' if v else 'false'
+    if isinstance(v, decimal.Decimal): v = float(v)
+    if isinstance(v, float): return repr(v)
+    if isinstance(v, dt.datetime):
+        if v.tzinfo is not None: v = v.astimezone(dt.timezone.utc).replace(tzinfo=None)
+        return v.isoformat(timespec='microseconds')
+    if isinstance(v, dt.date): return v.isoformat()
+    if isinstance(v, (dict, list)): return json.dumps(v, sort_keys=True, default=str, separators=(',', ':'))
+    if isinstance(v, (bytes, bytearray)): return v.hex()
+    s = str(v)
+    # JSON text read back from Parquet: re-canonicalise so key order and spacing do not matter
+    if s[:1] in '{[' and s[-1:] in '}]':
+        try: return json.dumps(json.loads(s), sort_keys=True, default=str, separators=(',', ':'))
+        except Exception: pass
+    return s
+
 def row_checksum(rows, cols):
-    hashes = sorted(hashlib.md5('|'.join('' if v is None else str(v) for v in (r[c] for c in cols)).encode()).hexdigest() for r in rows)
+    hashes = sorted(hashlib.md5('|'.join(canon(r[c]) for c in cols).encode()).hexdigest() for r in rows)
     return hashlib.md5(''.join(hashes).encode()).hexdigest()
 
 cutoff = dt.date.today() - dt.timedelta(days=int(cfg['hot_days']))
@@ -55,11 +75,12 @@ for t in cfg['tables']:
         if not rows: continue
         cols = list(rows[0].keys())
         checksum = row_checksum(rows, cols)
-        # Parquet via pyarrow; jsonb/dict columns are stored as JSON strings
-        import json, decimal
+        # Parquet via pyarrow; jsonb columns are stored as canonical JSON strings, decimals as floats,
+        # timestamps as naive UTC so the round-trip is representation-stable.
         def conv(v):
-            if isinstance(v, (dict, list)): return json.dumps(v, default=str)
+            if isinstance(v, (dict, list)): return json.dumps(v, sort_keys=True, default=str, separators=(',', ':'))
             if isinstance(v, decimal.Decimal): return float(v)
+            if isinstance(v, dt.datetime) and v.tzinfo is not None: return v.astimezone(dt.timezone.utc).replace(tzinfo=None)
             return v
         tbl = pa.Table.from_pylist([{c: conv(r[c]) for c in cols} for r in rows])
         buf = io.BytesIO(); pq.write_table(tbl, buf, compression='zstd'); data = buf.getvalue()
