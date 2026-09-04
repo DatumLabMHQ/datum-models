@@ -42,6 +42,21 @@ owner) when any ingest job errored, a source is past its expected cadence, or a 
 (`scripts/health.py`). Lineage and docs are generated on every hourly run and attached as the
 `dbt-docs` artifact.
 
+## Hot and cold storage
+
+Neon keeps the last `hot_days` (60) of every raw table; older day partitions move nightly to
+Cloudflare R2 as zstd Parquet under `<product>/<table>/day=YYYY-MM-DD/`, verified by row count
+and checksum before the hot rows are deleted, with a receipt in `ops.cold_partitions`
+(`scripts/tier_cold.py`, `tiering.yml`). Curated tables are never tiered. Without R2 secrets
+the job runs as a dry-run and deletes nothing.
+
+## Legacy history
+
+Existing product databases hold months of history. One-time importers copy it into the raw
+layer with `source_id = 'legacy_neon'` and receipts in `ops.legacy_imports`
+(`scripts/import_legacy_sui.py`; Morpho and RWA importers follow their seeds). They read the
+legacy databases and never write to them.
+
 ## Running locally
 
 ```

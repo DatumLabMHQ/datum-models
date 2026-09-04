@@ -1,0 +1,20 @@
+# Hot/cold tiering. Tables listed here keep `hot_days` of history in Neon; older day partitions
+# are exported to R2 as Parquet, verified, receipted in ops.cold_partitions, then deleted here.
+# Curated (fct_/dim_) tables are never tiered: they are small and dashboards read them directly.
+version: 1
+hot_days: 60
+r2:
+  bucket_env: R2_BUCKET            # env var holding the bucket name
+  endpoint_env: R2_ENDPOINT        # https://<accountid>.r2.cloudflarestorage.com
+  access_key_env: R2_ACCESS_KEY_ID
+  secret_key_env: R2_SECRET_ACCESS_KEY
+tables:
+  - product: sui
+    table: sui.raw_pool_snapshots
+    day_column: fetched_at
+  - product: sui
+    table: sui.raw_liquidation_events
+    day_column: ts
+  - product: sui
+    table: sui.raw_defillama_tvl
+    day_column: fetched_at

@@ -2,3 +2,5 @@ dbt-core<2
 dbt-postgres<2
 psycopg2-binary
 pyyaml
+pyarrow>=17
+boto3>=1.35

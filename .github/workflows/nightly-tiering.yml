@@ -1,0 +1,30 @@
+name: nightly-tiering
+# Move raw partitions older than the hot window from Neon to R2 (Parquet), with verification
+# and receipts. Runs as a dry-run (export only, no deletes) until the R2 secrets exist.
+on:
+  schedule:
+    - cron: "40 3 * * *"
+  workflow_dispatch: {}
+concurrency:
+  group: tiering
+  cancel-in-progress: false
+jobs:
+  tier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -q -r requirements.txt
+      - name: Tier cold partitions
+        run: |
+          if [ -n "$R2_BUCKET" ] && [ -n "$R2_ACCESS_KEY_ID" ]; then python scripts/tier_cold.py; else echo "::warning::R2 secrets not set; dry-run only"; python scripts/tier_cold.py --dry-run; fi
