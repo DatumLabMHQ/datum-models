@@ -92,7 +92,4 @@ jobs:
           retention-days: 14
       - name: Health gate
         if: always()
-        env:
-          # Centrifuge's API answers GitHub's US runners with 520s (2026-09-04); warn until the London route lands.
-          HEALTH_WARN_ONLY: centrifuge
         run: python scripts/health.py --window-hours 2
