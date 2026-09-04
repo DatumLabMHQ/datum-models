@@ -39,3 +39,12 @@ tables:
   - product: rwa
     table: rwa.raw_token_supply_history
     day_column: ts
+  - product: morpho
+    table: morpho.raw_market_snapshots
+    day_column: fetched_at
+  - product: morpho
+    table: morpho.raw_vault_snapshots
+    day_column: fetched_at
+  - product: morpho
+    table: morpho.raw_defillama_tvl
+    day_column: fetched_at

@@ -53,6 +53,9 @@ jobs:
           LEGACY_RWA_DATABASE_URL: ${{ secrets.LEGACY_RWA_DATABASE_URL }}
         run: python scripts/import_legacy_rwa.py || echo "::warning::RWA legacy sync had failures (see ops.legacy_imports)"
 
+      - name: Ingest Morpho (markets, vaults, curators, DefiLlama)
+        run: python scripts/ingest_morpho.py || echo "::warning::Morpho ingest had failures (see ops.sync_runs)"
+
       - name: dbt build
         run: |
           eval "$(python scripts/pgenv.py)"

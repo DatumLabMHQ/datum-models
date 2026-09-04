@@ -1,0 +1,31 @@
+version: 2
+models:
+  - name: stg_morpho__market_snapshots
+    description: Every hourly market snapshot; LLTV scaled from 1e18 to a fraction, rates and utilization to percent.
+  - name: stg_morpho__vault_snapshots
+    description: Every hourly vault snapshot; curator is the first curator name or UNATTRIBUTED.
+  - name: stg_morpho__defillama_tvl
+    description: Latest fetch per slug, chain and day.
+  - name: fct_morpho_market_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id]}
+    columns:
+      - {name: market_id, tests: [not_null]}
+      - {name: lltv, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1, where: "lltv is not null"}}]}
+      - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "listed and utilization is not null"}}]}
+  - name: fct_morpho_vault_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, vault_address]}
+    columns:
+      - {name: vault_address, tests: [not_null]}
+      - {name: total_assets_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 50000000000, where: "listed"}}]}
+  - name: fct_morpho_curator_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, curator]}
+    columns:
+      - {name: share_of_vault_tvl, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1.0001}}]}
+  - name: fct_morpho_protocol_tvl_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [slug, chain, day]}
+    columns:
+      - {name: tvl_net_usd, tests: [not_null, {dbt_utils.accepted_range: {min_value: 0, max_value: 200000000000}}]}

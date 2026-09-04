@@ -1,0 +1,16 @@
+version: 2
+sources:
+  - name: morpho_raw
+    schema: morpho
+    description: Hourly snapshots of Morpho markets and vaults from the Morpho GraphQL API, the curator registry, and DefiLlama TVL for Morpho and eleven comparator lending protocols.
+    tables:
+      - name: raw_market_snapshots
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}, error_after: {count: 12, period: hour}}
+      - name: raw_vault_snapshots
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_curators
+      - name: raw_defillama_tvl
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 36, period: hour}}

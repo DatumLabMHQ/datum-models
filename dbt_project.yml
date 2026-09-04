@@ -16,6 +16,12 @@ models:
     +persist_docs:
       relation: true
       columns: true
+    morpho:
+      +schema: morpho
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
     rwa:
       +schema: rwa
       staging:
