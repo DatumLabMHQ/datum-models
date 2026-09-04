@@ -1,0 +1,20 @@
+version: 2
+models:
+  - name: stg_aave__reserve_snapshots
+    description: Every hourly reserve snapshot; rates, utilization and liquidation threshold in percent.
+  - name: fct_aave_reserve_daily
+    description: One row per reserve per market per UTC day, last snapshot of the day.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, version, chain_id, market_key, underlying_address]}
+    columns:
+      - {name: supply_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100000000000}}]}
+      - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "utilization is not null"}}]}
+      - {name: supply_apy, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 500, where: "supply_apy is not null"}}]}
+  - name: fct_aave_market_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, version, chain_id, market_key]}
+    columns:
+      - {name: supply_usd, tests: [not_null, {dbt_utils.accepted_range: {min_value: 0, max_value: 100000000000}}]}
+  - name: fct_aave_protocol_tvl_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [slug, chain, day]}

@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: ref
+    schema: ref
+    description: Shared reference layer. DefiLlama per-chain TVL for every product's comparators, loaded once an hour (scripts/ingest_defillama.py), new or changed values only. Defined once here; every product references it.
+    tables:
+      - name: raw_defillama_tvl
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 36, period: hour}}

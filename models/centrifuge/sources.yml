@@ -1,0 +1,13 @@
+version: 2
+sources:
+  - name: centrifuge_raw
+    schema: centrifuge
+    description: Hourly pool and token snapshots, recent investor transactions, and the API's per-token history from api.centrifuge.io.
+    tables:
+      - name: raw_pool_snapshots
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}, error_after: {count: 12, period: hour}}
+      - name: raw_token_snapshots
+        loaded_at_field: fetched_at
+      - name: raw_token_history
+      - name: raw_investor_transactions

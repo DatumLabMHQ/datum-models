@@ -22,6 +22,18 @@ models:
         +materialized: view
       marts:
         +materialized: table
+    aave:
+      +schema: aave
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
+    centrifuge:
+      +schema: centrifuge
+      staging:
+        +materialized: view
+      marts:
+        +materialized: table
     rwa:
       +schema: rwa
       staging:

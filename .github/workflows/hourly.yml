@@ -58,6 +58,12 @@ jobs:
       - name: Ingest Morpho (listed hourly, everything at 00:xx UTC)
         run: python scripts/ingest_morpho.py || echo "::warning::Morpho ingest had failures (see ops.sync_runs)"
 
+      - name: Ingest Aave (v3 on 20 chains, v4 hub)
+        run: python scripts/ingest_aave.py || echo "::warning::Aave ingest had failures (see ops.sync_runs)"
+
+      - name: Ingest Centrifuge (pools, transactions, token history)
+        run: python scripts/ingest_centrifuge.py || echo "::warning::Centrifuge ingest had failures (see ops.sync_runs)"
+
       - name: dbt build
         run: |
           eval "$(python scripts/pgenv.py)"

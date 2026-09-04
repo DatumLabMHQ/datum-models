@@ -1,0 +1,20 @@
+version: 2
+models:
+  - name: stg_centrifuge__token_snapshots
+    description: Hourly token snapshots with supply, price and TVL in USD (issuance scaled by token decimals, price by 1e18).
+  - name: fct_centrifuge_token_daily
+    description: One row per token per UTC day; basis says whether it came from our snapshot or the API's own history.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, token_id]}
+    columns:
+      - {name: tvl_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 20000000000, where: "tvl_usd is not null"}}]}
+      - {name: basis, tests: [{accepted_values: {values: [snapshot, api_history]}}]}
+  - name: fct_centrifuge_pool_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, pool_id]}
+  - name: fct_centrifuge_flows_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, token_id]}
+  - name: fct_centrifuge_protocol_tvl_daily
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day]}
