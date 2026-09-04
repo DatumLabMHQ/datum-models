@@ -48,7 +48,6 @@ jobs:
           npx tsx scripts/platform-ingest.ts || echo "::warning::one or more Sui ingest jobs failed; the health gate below will fail the run"
 
       - name: Sync RWA history from the legacy database
-        if: env.LEGACY_RWA_DATABASE_URL != ''
         env:
           LEGACY_RWA_DATABASE_URL: ${{ secrets.LEGACY_RWA_DATABASE_URL }}
         run: python scripts/import_legacy_rwa.py || echo "::warning::RWA legacy sync had failures (see ops.legacy_imports)"

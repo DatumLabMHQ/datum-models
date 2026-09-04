@@ -3,7 +3,7 @@ models:
   - name: stg_morpho__market_snapshots
     description: Every hourly market snapshot; LLTV scaled from 1e18 to a fraction, rates and utilization to percent.
   - name: stg_morpho__vault_snapshots
-    description: Every hourly vault snapshot; curator is the first curator name or UNATTRIBUTED.
+    description: Every hourly vault snapshot for Vault V1 (vaults) and Vault V2 (vaultV2s), vault_version 1 or 2; curator is the first curator name or UNATTRIBUTED. fee_pct is the performance fee; management_fee_pct is V2 only.
   - name: stg_morpho__defillama_tvl
     description: Latest fetch per slug, chain and day.
   - name: fct_morpho_market_daily

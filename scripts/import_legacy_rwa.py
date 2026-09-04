@@ -11,7 +11,9 @@ import psycopg2, psycopg2.extras
 p = argparse.ArgumentParser(); p.add_argument('--full', action='store_true', help='ignore cursors and re-scan everything (still dedupes)'); a = p.parse_args()
 src_url = (os.environ.get('LEGACY_RWA_DATABASE_URL') or '').replace('&channel_binding=require', '')
 dst_url = os.environ.get('DATABASE_URL_DIRECT') or os.environ.get('DATABASE_URL')
-if not src_url or not dst_url: sys.exit('LEGACY_RWA_DATABASE_URL and DATABASE_URL must be set')
+if not src_url:
+    print('LEGACY_RWA_DATABASE_URL not set; skipping legacy RWA sync (set the repo secret to enable it)'); sys.exit(0)
+if not dst_url: sys.exit('DATABASE_URL must be set')
 src = psycopg2.connect(src_url); dst = psycopg2.connect(dst_url); d = dst.cursor()
 
 HISTORY = [  # (source table, target table, ts column, columns)

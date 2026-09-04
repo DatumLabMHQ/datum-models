@@ -8,6 +8,7 @@ import argparse, os, sys, json, time, datetime as dt
 import requests, psycopg2, psycopg2.extras
 
 API = 'https://blue-api.morpho.org/graphql'
+NON_CHAIN_KEYS = ('borrowed', 'staking', 'pool2', 'vesting', 'offers', 'treasury')
 COMPARATORS = ['morpho-blue', 'aave-v3', 'aave-v2', 'sparklend', 'compound-v3', 'compound-v2', 'fluid-lending', 'euler-v2', 'moonwell-lending', 'sky-lending', 'liquity-v1', 'liquity-v2']
 p = argparse.ArgumentParser()
 for x in ('markets', 'vaults', 'curators', 'defillama'): p.add_argument(f'--{x}', action='store_true')
@@ -41,6 +42,10 @@ MARKET_Q = """query($chain:[Int!], $first:Int!, $skip:Int!){ markets(first:$firs
 VAULT_Q = """query($chain:[Int!], $first:Int!, $skip:Int!){ vaults(first:$first, skip:$skip, where:{chainId_in:$chain}, orderBy: TotalAssetsUsd, orderDirection: Desc){
   pageInfo{countTotal} items{ address name symbol listed chain{id} asset{symbol address}
   state{ totalAssetsUsd apy netApy netApyExcludingRewards fee sharePriceUsd timestamp curator curators{ id name verified } } } } }"""
+
+VAULT_V2_Q = """query($chain:[Int!], $first:Int!, $skip:Int!){ vaultV2s(first:$first, skip:$skip, where:{chainId_in:$chain}, orderBy: TotalAssetsUsd, orderDirection: Desc){
+  pageInfo{countTotal} items{ address name symbol listed type chain{id} asset{symbol address} totalAssetsUsd idleAssetsUsd sharePrice apy netApy netApyExcludingRewards
+  performanceFee managementFee curator{address} curators{ items{ id name verified } } } } }"""
 
 def page(query, chain, key):
     skip, out = 0, []
@@ -81,7 +86,16 @@ if ALL or a.vaults:
                              [c.get('id') for c in curs], [c.get('name') for c in curs], ts(s.get('timestamp')), json.dumps(v)))
             psycopg2.extras.execute_values(cur, """insert into morpho.raw_vault_snapshots (run_id, fetched_at, chain_id, vault_address, name, symbol, listed, asset_symbol, asset_address,
                 total_assets_usd, apy, net_apy, net_apy_excl_rewards, fee, share_price_usd, curator_address, curator_ids, curator_names, state_timestamp, payload) values %s""", rows, page_size=500)
-            conn.commit(); n += len(rows); print(f'[vaults] chain {ch}: {len(rows)}')
+            conn.commit(); n += len(rows)
+            v2rows = []
+            for v in page(VAULT_V2_Q, ch, 'vaultV2s'):
+                curs = ((v.get('curators') or {}).get('items')) or []; asset = v.get('asset') or {}
+                v2rows.append((run, fetched, ch, v['address'], v.get('name'), v.get('symbol'), v.get('listed'), asset.get('symbol'), asset.get('address'),
+                               v.get('totalAssetsUsd'), v.get('apy'), v.get('netApy'), v.get('netApyExcludingRewards'), v.get('performanceFee'), v.get('sharePrice'), (v.get('curator') or {}).get('address'),
+                               [c.get('id') for c in curs], [c.get('name') for c in curs], None, json.dumps(v), 2, v.get('managementFee'), v.get('idleAssetsUsd')))
+            psycopg2.extras.execute_values(cur, """insert into morpho.raw_vault_snapshots (run_id, fetched_at, chain_id, vault_address, name, symbol, listed, asset_symbol, asset_address,
+                total_assets_usd, apy, net_apy, net_apy_excl_rewards, fee, share_price_usd, curator_address, curator_ids, curator_names, state_timestamp, payload, vault_version, management_fee, idle_assets_usd) values %s""", v2rows, page_size=500)
+            conn.commit(); n += len(v2rows); print(f'[vaults] chain {ch}: v1 {len(rows)}, v2 {len(v2rows)}')
         close_run(run, 'ok', n)
     except Exception as e:
         conn.rollback(); close_run(run, 'error', n, str(e)); failures.append(f'vaults: {e}'); print('[vaults] FAILED', e)
@@ -106,7 +120,7 @@ if ALL or a.defillama:
             fetched = dt.datetime.now(dt.timezone.utc); rows = []
             chain_tvls = j.get('chainTvls') or {}
             for chain, series in chain_tvls.items():
-                if any(chain.endswith(suf) for suf in ('-borrowed', '-staking', '-pool2', '-vesting', '-offers', '-treasury')): continue
+                if chain in NON_CHAIN_KEYS or any(chain.endswith('-' + suf) for suf in NON_CHAIN_KEYS): continue
                 borrowed = {pt['date']: pt['totalLiquidityUSD'] for pt in (chain_tvls.get(chain + '-borrowed') or {}).get('tvl', [])}
                 pts = [pt for pt in (series.get('tvl') or []) if pt['date'] >= cutoff][:-1]
                 for pt in pts:
