@@ -16,6 +16,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--dry-run', action='store_true', help='export locally, delete nothing')
 p.add_argument('--table', help='limit to one table')
 p.add_argument('--max-days', type=int, default=400, help='safety cap on partitions per run')
+p.add_argument('--check', action='store_true', help='verify R2 credentials with a probe object and exit')
 a = p.parse_args()
 
 cfg = yaml.safe_load(open('tiering.yml'))
@@ -30,6 +31,15 @@ if not a.dry_run:
     r2 = boto3.client('s3', endpoint_url=os.environ[env['endpoint_env']],
                       aws_access_key_id=os.environ[env['access_key_env']], aws_secret_access_key=os.environ[env['secret_key_env']], region_name='auto')
     bucket = os.environ[env['bucket_env']]
+    if a.check:
+        import time
+        key = f'_probe/{int(time.time())}.txt'
+        r2.put_object(Bucket=bucket, Key=key, Body=b'datum-models tiering probe')
+        back = r2.get_object(Bucket=bucket, Key=key)['Body'].read()
+        r2.delete_object(Bucket=bucket, Key=key)
+        assert back == b'datum-models tiering probe'
+        print(f'R2 OK: wrote, read and deleted {key} in bucket {bucket}')
+        sys.exit(0)
 
 import json, decimal
 def canon(v):

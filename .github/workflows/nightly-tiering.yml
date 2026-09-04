@@ -25,6 +25,9 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -q -r requirements.txt
+      - name: Check R2 credentials
+        if: env.R2_ACCESS_KEY_ID != ''
+        run: python scripts/tier_cold.py --check
       - name: Tier cold partitions
         run: |
           if [ -n "$R2_BUCKET" ] && [ -n "$R2_ACCESS_KEY_ID" ]; then python scripts/tier_cold.py; else echo "::warning::R2 secrets not set; dry-run only"; python scripts/tier_cold.py --dry-run; fi
