@@ -1,0 +1,20 @@
+# Protocol slugs loaded into ref.raw_defillama_tvl every hour (400 days of per-chain TVL, with
+# the "-borrowed" series where DefiLlama publishes one). Add a slug here, never a second loader.
+slugs:
+  - aave-v3
+  - aave-v2
+  - aave-v4
+  - centrifuge
+  - morpho-blue
+  - sparklend
+  - compound-v3
+  - fluid-lending
+  - euler-v2
+  - sky-lending
+  - liquity-v2
+  - maple
+  - ondo-finance
+  - superstate
+  - compound-v2
+  - moonwell-lending
+  - liquity-v1

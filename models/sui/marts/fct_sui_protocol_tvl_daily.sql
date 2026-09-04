@@ -1,3 +1,6 @@
+{{ config(materialized='incremental', unique_key=['protocol', 'day'], incremental_strategy='delete+insert', on_schema_change='append_new_columns') }}
+-- Incremental: raw rows older than 60 days move to R2 (tiering), so this mart keeps its own history and
+-- only recomputes the last 3 days each run. A full refresh rebuilds only what is still hot in Neon.
 -- Net and gross TVL per protocol per day, with the method recorded beside the value.
 -- Method per protocol follows datum-context/metrics/tvl-net.md: NAVI, Suilend, AlphaLend are
 -- computed from our own pool rows (net = supply - borrow); Scallop and Bucket are 'remote'
@@ -10,12 +13,13 @@ with own as (
     sum(total_borrows_usd)                             as borrows_usd,
     max(as_of)                                         as as_of
   from {{ ref('fct_sui_pool_daily') }}
-  where is_lending_pool
+  where is_lending_pool {% if is_incremental() %} and day >= current_date - 3 {% endif %}
   group by 1, 2
 ),
 remote as (
   select protocol, day, tvl_usd, fetched_at as as_of
   from {{ ref('stg_sui__defillama_tvl') }}
+  {% if is_incremental() %} where day >= current_date - 3 {% endif %}
 ),
 method as (
   select * from (values ('navi','net'), ('suilend','net'), ('alphalend','net'), ('scallop','remote'), ('bucket','remote')) as m(protocol, method)

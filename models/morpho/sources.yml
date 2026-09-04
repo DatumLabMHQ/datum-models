@@ -11,6 +11,10 @@ sources:
         loaded_at_field: fetched_at
         freshness: {warn_after: {count: 3, period: hour}}
       - name: raw_curators
+  - name: ref
+    schema: ref
+    description: Shared reference layer. DefiLlama per-chain TVL for every product's comparators, loaded once an hour, new or changed values only.
+    tables:
       - name: raw_defillama_tvl
         loaded_at_field: fetched_at
         freshness: {warn_after: {count: 36, period: hour}}

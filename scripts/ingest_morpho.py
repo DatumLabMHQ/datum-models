@@ -1,19 +1,21 @@
 """Hourly Morpho ingest: snapshot every market and vault on every chain from the Morpho GraphQL
-API, refresh the curator registry, and pull DefiLlama TVL (with borrowed) for Morpho and its
-comparators. Append-only raw rows with run logs. Full snapshots, so no cursors are needed.
+API and refresh the curator registry. Listed markets/vaults every hour; every market/vault once a day
+(00:xx UTC) or with --full. Append-only raw rows with run logs; no cursors needed.
 
-  DATABASE_URL=... python scripts/ingest_morpho.py [--markets] [--vaults] [--curators] [--defillama]
+  DATABASE_URL=... python scripts/ingest_morpho.py [--markets] [--vaults] [--curators] [--full]
 """
 import argparse, os, sys, json, time, datetime as dt
 import requests, psycopg2, psycopg2.extras
 
 API = 'https://blue-api.morpho.org/graphql'
 NON_CHAIN_KEYS = ('borrowed', 'staking', 'pool2', 'vesting', 'offers', 'treasury')
-COMPARATORS = ['morpho-blue', 'aave-v3', 'aave-v2', 'sparklend', 'compound-v3', 'compound-v2', 'fluid-lending', 'euler-v2', 'moonwell-lending', 'sky-lending', 'liquity-v1', 'liquity-v2']
 p = argparse.ArgumentParser()
-for x in ('markets', 'vaults', 'curators', 'defillama'): p.add_argument(f'--{x}', action='store_true')
+for x in ('markets', 'vaults', 'curators', 'full'): p.add_argument(f'--{x}', action='store_true')
 a = p.parse_args()
-ALL = not any([a.markets, a.vaults, a.curators, a.defillama])
+ALL = not any([a.markets, a.vaults, a.curators])
+# Unlisted markets and vaults are mostly dust and fake-price entries: snapshot them once a day (00:xx UTC) or with --full;
+# listed ones every hour. The full JSON payload is stored only in the daily sweep, for listed rows, to keep Neon small.
+FULL = a.full or dt.datetime.now(dt.timezone.utc).hour == 0
 url = os.environ.get('DATABASE_URL_DIRECT') or os.environ.get('DATABASE_URL')
 if not url: sys.exit('DATABASE_URL not set')
 conn = psycopg2.connect(url); cur = conn.cursor()
@@ -62,10 +64,11 @@ if ALL or a.markets:
         for ch in chains():
             rows = []
             for m in page(MARKET_Q, ch, 'markets'):
+                if not FULL and not m.get('listed'): continue
                 s = m.get('state') or {}; ca = m.get('collateralAsset') or {}; la = m.get('loanAsset') or {}
                 rows.append((run, fetched, ch, m['marketId'], m.get('listed'), ca.get('symbol'), ca.get('address'), la.get('symbol'), la.get('address'), la.get('decimals'),
                              m.get('lltv'), s.get('supplyAssetsUsd'), s.get('borrowAssetsUsd'), s.get('collateralAssetsUsd'), s.get('liquidityAssetsUsd'), s.get('utilization'),
-                             s.get('supplyApy'), s.get('borrowApy'), s.get('netSupplyApy'), s.get('fee'), (m.get('badDebt') or {}).get('usd'), ts(s.get('timestamp')), json.dumps(m)))
+                             s.get('supplyApy'), s.get('borrowApy'), s.get('netSupplyApy'), s.get('fee'), (m.get('badDebt') or {}).get('usd'), ts(s.get('timestamp')), json.dumps(m) if (FULL and m.get('listed')) else None))
             psycopg2.extras.execute_values(cur, """insert into morpho.raw_market_snapshots (run_id, fetched_at, chain_id, market_id, listed, collateral_symbol, collateral_address,
                 loan_symbol, loan_address, loan_decimals, lltv, supply_assets_usd, borrow_assets_usd, collateral_assets_usd, liquidity_assets_usd, utilization,
                 supply_apy, borrow_apy, net_supply_apy, fee, bad_debt_usd, state_timestamp, payload) values %s""", rows, page_size=500)
@@ -80,19 +83,21 @@ if ALL or a.vaults:
         for ch in chains():
             rows = []
             for v in page(VAULT_Q, ch, 'vaults'):
+                if not FULL and not v.get('listed'): continue
                 s = v.get('state') or {}; curs = s.get('curators') or []; asset = v.get('asset') or {}
                 rows.append((run, fetched, ch, v['address'], v.get('name'), v.get('symbol'), v.get('listed'), asset.get('symbol'), asset.get('address'),
                              s.get('totalAssetsUsd'), s.get('apy'), s.get('netApy'), s.get('netApyExcludingRewards'), s.get('fee'), s.get('sharePriceUsd'), s.get('curator'),
-                             [c.get('id') for c in curs], [c.get('name') for c in curs], ts(s.get('timestamp')), json.dumps(v)))
+                             [c.get('id') for c in curs], [c.get('name') for c in curs], ts(s.get('timestamp')), json.dumps(v) if (FULL and v.get('listed')) else None))
             psycopg2.extras.execute_values(cur, """insert into morpho.raw_vault_snapshots (run_id, fetched_at, chain_id, vault_address, name, symbol, listed, asset_symbol, asset_address,
                 total_assets_usd, apy, net_apy, net_apy_excl_rewards, fee, share_price_usd, curator_address, curator_ids, curator_names, state_timestamp, payload) values %s""", rows, page_size=500)
             conn.commit(); n += len(rows)
             v2rows = []
             for v in page(VAULT_V2_Q, ch, 'vaultV2s'):
+                if not FULL and not v.get('listed'): continue
                 curs = ((v.get('curators') or {}).get('items')) or []; asset = v.get('asset') or {}
                 v2rows.append((run, fetched, ch, v['address'], v.get('name'), v.get('symbol'), v.get('listed'), asset.get('symbol'), asset.get('address'),
                                v.get('totalAssetsUsd'), v.get('apy'), v.get('netApy'), v.get('netApyExcludingRewards'), v.get('performanceFee'), v.get('sharePrice'), (v.get('curator') or {}).get('address'),
-                               [c.get('id') for c in curs], [c.get('name') for c in curs], None, json.dumps(v), 2, v.get('managementFee'), v.get('idleAssetsUsd')))
+                               [c.get('id') for c in curs], [c.get('name') for c in curs], None, json.dumps(v) if (FULL and v.get('listed')) else None, 2, v.get('managementFee'), v.get('idleAssetsUsd')))
             psycopg2.extras.execute_values(cur, """insert into morpho.raw_vault_snapshots (run_id, fetched_at, chain_id, vault_address, name, symbol, listed, asset_symbol, asset_address,
                 total_assets_usd, apy, net_apy, net_apy_excl_rewards, fee, share_price_usd, curator_address, curator_ids, curator_names, state_timestamp, payload, vault_version, management_fee, idle_assets_usd) values %s""", v2rows, page_size=500)
             conn.commit(); n += len(v2rows); print(f'[vaults] chain {ch}: v1 {len(rows)}, v2 {len(v2rows)}')
@@ -111,24 +116,6 @@ if ALL or a.curators:
     except Exception as e:
         conn.rollback(); close_run(run, 'error', n, str(e)); failures.append(f'curators: {e}'); print('[curators] FAILED', e)
 
-if ALL or a.defillama:
-    run = open_run('morpho.defillama_tvl'); n = 0; ok = True
-    cutoff = int(time.time()) - 400 * 86400
-    for slug in COMPARATORS:
-        try:
-            r = requests.get(f'https://api.llama.fi/protocol/{slug}', timeout=60); r.raise_for_status(); j = r.json()
-            fetched = dt.datetime.now(dt.timezone.utc); rows = []
-            chain_tvls = j.get('chainTvls') or {}
-            for chain, series in chain_tvls.items():
-                if chain in NON_CHAIN_KEYS or any(chain.endswith('-' + suf) for suf in NON_CHAIN_KEYS): continue
-                borrowed = {pt['date']: pt['totalLiquidityUSD'] for pt in (chain_tvls.get(chain + '-borrowed') or {}).get('tvl', [])}
-                pts = [pt for pt in (series.get('tvl') or []) if pt['date'] >= cutoff][:-1]
-                for pt in pts:
-                    rows.append((slug, chain.lower(), dt.datetime.fromtimestamp(pt['date'], dt.timezone.utc).date(), pt['totalLiquidityUSD'], borrowed.get(pt['date']), fetched, run))
-            psycopg2.extras.execute_values(cur, "insert into morpho.raw_defillama_tvl (slug, chain, day, tvl_usd, borrowed_usd, fetched_at, run_id) values %s on conflict do nothing", rows, page_size=2000)
-            conn.commit(); n += len(rows); print(f'[defillama] {slug}: {len(rows)} chain-days')
-        except Exception as e:
-            conn.rollback(); ok = False; failures.append(f'defillama {slug}: {e}'); print(f'[defillama] {slug} FAILED', e)
-    close_run(run, 'ok' if ok else 'error', n, None if ok else 'see log'); freshness('defillama_protocol', ok, 36)
+# DefiLlama comparators now load once for every product via scripts/ingest_defillama.py into ref.raw_defillama_tvl.
 
 sys.exit(1 if failures else 0)
