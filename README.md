@@ -75,3 +75,19 @@ dbt build --profiles-dir . --target dev       # builds and tests every model
   way of computing the metric exists.
 - A failing test on a mart blocks the mart from updating; the previous rows stay.
 - Units follow `datum-context/house/units.md`: USD as doubles, percent as numbers, UTC.
+
+## Run it anywhere
+
+`requirements.lock` pins every Python dependency; `Dockerfile` builds the runner image (Python 3.12 + Node 22);
+`bin/hourly.sh` and `bin/nightly.sh` are the pipelines as scripts. GitHub Actions runs the same scripts, so a run
+on a laptop is the same run.
+
+```bash
+make image                 # build the runner
+make check                 # plan + dependency imports, no database needed
+make hourly                # the full hourly pipeline against ~/.config/datum/.env
+make build                 # dbt build into the dev schemas
+```
+
+Without Docker: `pip install -r requirements.lock`, Node 22, then `bin/hourly.sh` with `DATABASE_URL` set.
+The `container` workflow builds the image on every pull request and checks dbt parses and connects inside it.

@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -q -r requirements.txt
+      - run: pip install -q -r requirements.lock
       - name: Migrations apply cleanly (dry check of new files)
         run: python scripts/migrate.py --check
       - name: dbt build into ci schemas

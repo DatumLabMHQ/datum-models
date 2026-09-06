@@ -1,0 +1,7 @@
+{
+  "name": "datum-models",
+  "build": { "dockerfile": "../Dockerfile", "context": ".." },
+  "remoteEnv": { "DBT_TARGET": "dev" },
+  "postCreateCommand": "bin/hourly.sh --check",
+  "customizations": { "vscode": { "extensions": ["innoverio.vscode-dbt-power-user", "ms-python.python"] } }
+}

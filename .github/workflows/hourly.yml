@@ -22,74 +22,22 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -q -r requirements.txt
-      - name: Migrate
-        run: python scripts/migrate.py
-
-      - name: Resolve pinned SuiLending ref
-        id: ref
-        run: echo "ref=$(cat ingest/sui/SOURCE_REF)" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
-        with:
-          repository: DatumLabMHQ/SuiLending
-          ref: ${{ steps.ref.outputs.ref }}
-          path: _sui
+          cache-dependency-path: requirements.lock
+      - run: pip install -q -r requirements.lock
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Ingest Sui (pools, liquidations, DefiLlama)
-        working-directory: _sui
+      - name: Hourly pipeline (bin/hourly.sh is the same script the container runs)
         env:
-          PLATFORM_DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SUI_GRPC_URL: ${{ secrets.SUI_GRPC_URL }}
           SUI_GRPC_BEARER: ${{ secrets.SUI_GRPC_BEARER }}
-        run: |
-          npm ci --no-audit --no-fund --silent
-          npx tsx scripts/platform-ingest.ts || echo "::warning::one or more Sui ingest jobs failed; the health gate below will fail the run"
-
-      - name: Sync RWA history from the legacy database
-        env:
-          LEGACY_RWA_DATABASE_URL: ${{ secrets.LEGACY_RWA_DATABASE_URL }}
-        run: python scripts/import_legacy_rwa.py || echo "::warning::RWA legacy sync had failures (see ops.legacy_imports)"
-
-      - name: Load DefiLlama comparators into ref (new or changed values only)
-        run: python scripts/ingest_defillama.py || echo "::warning::DefiLlama load had failures (see ops.sync_runs)"
-
-      - name: Ingest Morpho (listed hourly, everything at 00:xx UTC)
-        run: python scripts/ingest_morpho.py || echo "::warning::Morpho ingest had failures (see ops.sync_runs)"
-
-      - name: Ingest Aave (v3 on 20 chains, v4 hub)
-        run: python scripts/ingest_aave.py || echo "::warning::Aave ingest had failures (see ops.sync_runs)"
-
-      - name: Ingest Centrifuge (pools, transactions, token history)
-        env:
           CENTRIFUGE_API_URL: https://centrifuge-dashboard-datum.vercel.app/api/graph-proxy
           CENTRIFUGE_PROXY_KEY: ${{ secrets.CENTRIFUGE_PROXY_KEY }}
-        run: python scripts/ingest_centrifuge.py || echo "::warning::Centrifuge ingest had failures (see ops.sync_runs)"
-
-      - name: dbt build
-        run: |
-          eval "$(python scripts/pgenv.py)"
-          dbt deps --profiles-dir .
-          dbt build --profiles-dir . --target prod
-      - name: Source freshness
-        run: |
-          eval "$(python scripts/pgenv.py)"
-          dbt source freshness --profiles-dir . --target prod
-      - name: Record run
-        if: always()
-        run: python scripts/record_run.py --job dbt.build --status "${{ job.status }}" --runner github-actions
-      - name: Docs and lineage
-        if: always()
-        run: |
-          eval "$(python scripts/pgenv.py)"
-          dbt docs generate --profiles-dir . --target prod --static
+        run: bin/hourly.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dbt-docs
           path: target/static_index.html
           retention-days: 14
-      - name: Health gate
-        if: always()
-        run: python scripts/health.py --window-hours 2
+          if-no-files-found: ignore
