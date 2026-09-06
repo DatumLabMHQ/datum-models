@@ -23,8 +23,11 @@ select
   -- utilization is stored 0..100; derive it when the adapter left it null
   coalesce(utilization,
            case when total_supply_usd > 0 then 100.0 * total_borrows_usd / total_supply_usd end) as utilization,
-  ltv,
-  liquidation_threshold,
+  -- House unit is percent. Adapters disagree: NAVI reports basis points (8000), the legacy import
+  -- stored percent (80), some SDKs return a fraction (0.8). Normalise every row.
+  case when ltv > 100 then ltv / 100.0 when ltv <= 1 then ltv * 100.0 else ltv end as ltv,
+  case when liquidation_threshold > 100 then liquidation_threshold / 100.0
+       when liquidation_threshold <= 1 then liquidation_threshold * 100.0 else liquidation_threshold end as liquidation_threshold,
   price_usd,
   irm,
   -- Non-lending rows (Bucket PSM, V1 wrappers, saving pools) are kept but flagged so marts can exclude them.
