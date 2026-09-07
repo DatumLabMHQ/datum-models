@@ -18,3 +18,11 @@ slugs:
   - compound-v2
   - moonwell-lending
   - liquity-v1
+  # Robinhood Chain lending long tail (State of Lending on Robinhood Chain dashboard)
+  - oter-finance
+  - native-credit-pool
+  - ripe-protocol
+  - termmax
+  - kyros-finance
+  - sharewoods
+  - usdax-finance
