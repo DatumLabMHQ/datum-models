@@ -45,6 +45,9 @@ tables:
   - product: morpho
     table: morpho.raw_vault_snapshots
     day_column: fetched_at
+  - product: morpho
+    table: morpho.raw_position_snapshots
+    day_column: fetched_at
   - product: aave
     table: aave.raw_reserve_snapshots
     day_column: fetched_at
