@@ -35,6 +35,7 @@ fi
 step "rwa legacy sync"; python scripts/import_legacy_rwa.py   || warn "RWA legacy sync had failures (see ops.legacy_imports)"
 step "defillama (ref)"; python scripts/ingest_defillama.py    || warn "DefiLlama load had failures (see ops.sync_runs)"
 step "morpho";          python scripts/ingest_morpho.py       || warn "Morpho ingest had failures (see ops.sync_runs)"
+step "morpho positions"; python scripts/ingest_morpho_positions.py || warn "Morpho positions ingest had failures (see ops.sync_runs)"
 step "aave";            python scripts/ingest_aave.py         || warn "Aave ingest had failures (see ops.sync_runs)"
 step "centrifuge";      python scripts/ingest_centrifuge.py   || warn "Centrifuge ingest had failures (see ops.sync_runs)"
 

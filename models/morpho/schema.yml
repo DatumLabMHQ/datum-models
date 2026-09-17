@@ -6,6 +6,8 @@ models:
     description: Every hourly vault snapshot for Vault V1 (vaults) and Vault V2 (vaultV2s), vault_version 1 or 2; curator is the first curator name or UNATTRIBUTED. fee_pct is the performance fee; management_fee_pct is V2 only.
   - name: stg_morpho__defillama_tvl
     description: Latest fetch per slug, chain and day.
+  - name: stg_morpho__position_snapshots
+    description: "Every positions snapshot (twice a day): the largest suppliers and borrowers of the largest listed markets, addresses lower-cased."
   - name: fct_morpho_market_daily
     tests:
       - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id]}
@@ -13,6 +15,22 @@ models:
       - {name: market_id, tests: [not_null]}
       - {name: lltv, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1, where: "lltv is not null"}}]}
       - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "listed and utilization is not null"}}]}
+  - name: fct_morpho_position_daily
+    description: One row per sampled position per day from the last positions run of the day; share_of_market_pct is against the market's own total at the snapshot.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id, side, user_address]}
+    columns:
+      - {name: user_address, tests: [not_null]}
+      - {name: side, tests: [{accepted_values: {values: [supply, borrow]}}]}
+      - {name: health_factor, tests: [{dbt_utils.accepted_range: {min_value: 0, where: "health_factor is not null"}}]}
+      - {name: share_of_market_pct, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "share_of_market_pct is not null"}}]}
+  - name: fct_morpho_market_health_daily
+    description: One row per sampled market per day; largest borrowers' collateral by health-factor band, borrow and supply coverage of the sample, top-5 supplier share.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id]}
+    columns:
+      - {name: borrow_coverage_pct, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "borrow_coverage_pct is not null"}}]}
+      - {name: top5_supply_share_pct, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "top5_supply_share_pct is not null"}}]}
   - name: fct_morpho_vault_daily
     tests:
       - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, vault_address]}

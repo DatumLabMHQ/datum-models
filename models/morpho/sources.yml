@@ -10,4 +10,7 @@ sources:
       - name: raw_vault_snapshots
         loaded_at_field: fetched_at
         freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_position_snapshots
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 14, period: hour}, error_after: {count: 30, period: hour}}
       - name: raw_curators
