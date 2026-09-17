@@ -7,7 +7,7 @@ models:
   - name: stg_morpho__defillama_tvl
     description: Latest fetch per slug, chain and day.
   - name: stg_morpho__position_snapshots
-    description: Every positions snapshot (twice a day): the largest suppliers and borrowers of the largest listed markets, addresses lower-cased.
+    description: "Every positions snapshot (twice a day): the largest suppliers and borrowers of the largest listed markets, addresses lower-cased."
   - name: fct_morpho_market_daily
     tests:
       - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id]}
