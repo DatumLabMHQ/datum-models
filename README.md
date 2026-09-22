@@ -1,5 +1,7 @@
 # datum-models
 
+> Part of [Atlas](https://github.com/DatumLabMHQ/atlas), Datum Labs' internal data infrastructure. Start there for how the parts fit together.
+
 The modeled tables behind every Datum Labs product. One Neon database, one schema per product,
 three layers per schema, tests on every layer, an hourly run that logs itself.
 
