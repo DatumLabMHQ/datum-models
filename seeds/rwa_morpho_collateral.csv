@@ -1,0 +1,58 @@
+chain_id,collateral_address,symbol,asset_class,issuer,evidence
+1,0x80ac24aa929eaf5013f6436cda2a7ba190f5cc0b,syrupUSDC,Private Credit,Maple,legacy curated list; Morpho listed
+42161,0x41ca7586cc1311807b4605fbb748a3b8862b42b5,syrupUSDC,Private Credit,Maple,Morpho listed
+8453,0x660975730059246a68521a3e2fbd4740173100f5,syrupUSDC,Private Credit,Maple,Morpho listed; verified in legacy CROSS_CHAIN map
+143,0xab6e5a0c3799d020c790d34f7b2c02639e238af7,syrupUSDC,Private Credit,Maple,Morpho listed
+5042,0x0dc6b79f3c3854e4d74514fd4d29be6c96beee39,syrupUSDC,Private Credit,Maple,Morpho listed
+1,0x356b8d89c1e1239cbbb9de4815c39a1474d5ba7d,syrupUSDT,Private Credit,Maple,Morpho listed
+4663,0x40858070814a57fdf33a613ae84fe0a8b4a874f7,syrupUSDG,Private Credit,Maple,on-chain name syrupUSDG; Morpho listed
+1,0x19ebb35279a16207ec4ba82799cc64715065f7f6,PRIME,Private Credit,Figure (Hastra),on-chain name Hastra PRIME; Morpho listed
+1,0xc360e625f19a7ea47e47810b13e386221d5187d1,nvPRIME,Private Credit,Figure (Hastra) via Nuva,on-chain name Nuva Prime Vault; Morpho listed
+1,0x22ae3d9a738471f405169af055d31c687087d4c7,PST,Private Credit,Huma Finance,on-chain name PayFi Strategy Token; Morpho listed
+5042,0xa6db07ebf438d91aa653746fc05523e435645525,PST,Private Credit,Huma Finance,Morpho listed
+1,0xc26a6fa2c37b38e549a4a1807543801db684f99c,AA_FalconXUSDC,Private Credit,Pareto (FalconX),on-chain name Pareto AA Tranche - FalconXUSDC; Morpho listed
+143,0x91d93dbd823221ea9e54fb3e447bd917ce41f2e8,AA_FalconXUSDC,Private Credit,Pareto (FalconX),Morpho listed
+1,0x4614f7a56a3eb83b2ff9fa4b4b9575b28fb68644,wFalconX,Private Credit,Pareto (FalconX),on-chain name Wrapped FalconX; Morpho listed
+1,0x238a700ed6165261cf8b2e544ba797bc11e466ba,mF-ONE,Private Credit,Midas (Fasanara),legacy curated list; Morpho listed
+1,0x7433806912eae67919e66aea853d46fa0aef98a8,mGLOBAL,Private Credit,Midas (Fasanara),issuer contract (also Horizon reserve)
+4663,0xfed493f38c1aacb4ea4e6a11f8b9287849ee0096,mGLO,Private Credit,Midas (Fasanara),on-chain name Midas Fasanara Global Open; Morpho listed
+8453,0xfcc9cc1209651ed8867332d6f664cf82743a2584,mGLO,Private Credit,Midas (Fasanara),on-chain name Midas Fasanara Global Open; Morpho listed
+1,0x4e72025984424e52838cf8953e2863eff036b67a,mWIN,Fixed Income,Midas (Wellington),on-chain name Midas Wellington Income Opportunities; Morpho listed
+1,0x593ccca4c4bf58b7526a4c164ceef4003c6388db,nALPHA,Private Credit,Nest (Plume),on-chain name Nest Alpha Vault
+1,0x119dd7daff816f29d7ee47596ae5e4bdc4299165,nOPAL,Private Credit,Nest (Plume),on-chain name Nest BlackOpal LiquidStone II Vault
+1,0x86b495e4cb00ab18ad94bfd7920479cc79e8ebfe,wJAAA,Private Credit (CLO),Janus Henderson / Anemoy / Centrifuge,legacy curated list; Morpho listed
+1,0x5a0f93d040de44e78f251b03c43be9cf317dcf64,JAAA,Private Credit (CLO),Janus Henderson / Anemoy / Centrifuge,issuer contract
+1,0x8c213ee79581ff4984583c6a801e5263418c4b86,JTRSY,US Treasuries,Janus Henderson / Anemoy / Centrifuge,issuer contract
+8453,0x8c213ee79581ff4984583c6a801e5263418c4b86,JTRSY,US Treasuries,Janus Henderson / Anemoy / Centrifuge,issuer contract (same address on Base)
+1,0x43415eb6ff9db7e26a15b704e7a3edce97d31c4e,USTB,US Treasuries,Superstate,issuer contract
+1,0x14d60e7fdc0d71d8611742720e4c50e7a974020c,USCC,Crypto Carry,Superstate,issuer contract; Morpho listed
+1,0xf458ad24b1de7c653e8471efb0b87710b316b7d9,wUSCC,Crypto Carry,Superstate,Morpho listed
+1,0x136471a34f6ef19fe571effc1ca711fdb8e49f2b,USYC,US Treasuries,Circle (Hashnote),issuer contract
+1,0x2255718832bc9fd3be1caf75084f4803da14ff01,VBILL,US Treasuries,VanEck (Securitize),issuer contract
+1,0x7712c34205737192402172409a8f7ccef8aa2aec,BUIDL,US Treasuries,BlackRock (Securitize),issuer contract
+1,0x96f6ef951840721adbf46ac996b59e0235cb985c,USDY,US Treasuries,Ondo,issuer contract
+1,0xdd629e5241cbc5919847783e6c96b2de4754e438,mTBILL,US Treasuries,Midas,issuer contract
+8453,0xdd629e5241cbc5919847783e6c96b2de4754e438,mTBILL,US Treasuries,Midas,issuer contract (same address on Base)
+1,0x8238884ec9668ef77b90c6dff4d1a9f4f4823bfe,USDO,US Treasuries,OpenEden,issuer contract
+1,0xad55aebc9b8c03fc43cd9f62260391c13c23e7c0,cUSDO,US Treasuries,OpenEden,issuer contract
+988,0xfdd22ce6d1f66bc0ec89b20bf16ccb6670f55a5a,thBILL,US Treasuries,Theo,Morpho listed
+999,0xfdd22ce6d1f66bc0ec89b20bf16ccb6670f55a5a,thBILL,US Treasuries,Theo,Morpho listed
+1,0xa0769f7a8fc65e47de93797b4e21c073c117fc80,EUTBL,Govt Bonds (EU),Spiko,legacy curated list; Morpho listed
+1,0x0990b149e915cb08e2143a5c6f669c907eddc8b0,eurSAFO,Money Market (EU),Spiko (Amundi),on-chain name Spiko Amundi Overnight Swap Fund (EUR); Morpho listed
+1,0x5086bf358635b81d8c47c66d1c8b9e567db70c72,reUSD,Reinsurance,Re Protocol,on-chain name Re Protocol Deposit Token; Morpho listed
+8453,0x7d214438d0f27afccc23b3d1e1a53906ace5cfea,reUSD,Reinsurance,Re Protocol,Morpho listed
+1,0xecfafdc7741323a945a163ed068b5a3c43483957,PT-reUSD-10DEC2026,Reinsurance,Re Protocol (Pendle PT),Pendle principal token of reUSD; Morpho listed
+1,0x3eaa0f0f0a5d3d595ae4e4b0d27f439d01c3e7b2,PT-reUSD-25JUN2026,Reinsurance,Re Protocol (Pendle PT),Pendle principal token of reUSD; Morpho listed
+1,0x68749665ff8d2d112fa859aa293f07a622782f38,XAUt,Commodities (Gold),Tether,legacy curated list; Morpho listed
+42161,0x40461291347e1ecbb09499f3371d3f17f10d7159,XAUt0,Commodities (Gold),Tether,Morpho listed
+143,0x01bff41798a0bcf287b996046ca68b395dbc1071,XAUt0,Commodities (Gold),Tether,Morpho listed
+1,0x45804880de22913dafe09f4980848ece6ecbaf78,PAXG,Commodities (Gold),Paxos,legacy curated list; Morpho listed
+1,0xc88fcd8b874fdb3256e8b55b3decb8c24eab4c02,wSPYx,Stocks,xStocks (Backed),in api.backed.fi registry; Morpho listed
+1,0x90a2a4c76b5d8c0bc892a69ea28aa775a8f2dd48,SPYx,Stocks,xStocks (Backed),in api.backed.fi registry
+1,0x93e62845c1dd5822ebc807ab71a5fb750decd15a,wNVDAx,Stocks,xStocks (Backed),in api.backed.fi registry
+999,0xa8ddb5cd96b5222afe198316e9a57caa642850d5,wNVDAx,Stocks,xStocks (Backed),in api.backed.fi registry
+1,0x34d78e7b06542dab48f9bf9f0835c7582141314e,wSTRCx,Stocks,xStocks (Backed),in api.backed.fi registry
+1,0xfedc5f4a6c38211c1338aa411018dfaf26612c08,SPYon,Stocks,Ondo Global Markets,issuer contract; Morpho listed
+1,0xf6b1117ec07684d3958cad8beb1b302bfd21103f,TSLAon,Stocks,Ondo Global Markets,issuer contract; Morpho listed
+1,0x0e397938c1aa0680954093495b70a9f5e2249aba,QQQon,Stocks,Ondo Global Markets,Morpho listed
+1,0x54c1ff361b402f66c13107421e6a431c3375ef24,FLHYon,Stocks,Ondo Global Markets,Morpho listed

@@ -8,6 +8,15 @@ models:
     description: Every 5-minute snapshot per Morpho RWA-collateral market.
   - name: stg_rwa__asset_aum_history
     description: AUM observations per tokenized asset joined to asset and issuer names.
+  - name: stg_rwa__horizon_emode
+    description: Horizon e-mode categories per reserve and role (collateral or borrowable), one row per read.
+    columns:
+      - {name: role, tests: [{accepted_values: {values: ['collateral', 'borrowable']}}]}
+      - {name: ltv_pct, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100}}]}
+  - name: stg_rwa__token_supply
+    description: totalSupply per tokenized asset and chain, one row per read.
+    columns:
+      - {name: total_supply, tests: [not_null, {dbt_utils.accepted_range: {min_value: 0}}]}
   - name: fct_rwa_totals_daily
     description: Daily last-value totals for the RWA terminal. total_aum_usd counts every Horizon-listed reserve including stablecoins; rwa_aum_usd is the tokenized-RWA-only figure. See datum-context/products/rwa-terminal.md.
     tests:
@@ -25,16 +34,57 @@ models:
       - {name: reserve, tests: [not_null]}
       - {name: supplied_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
       - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100.5, where: "utilization is not null"}}]}
+      # e-mode must never be looser than 100% and should sit at or above the base LTV it improves on.
+      - {name: emode_ltv, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 100, where: "emode_ltv is not null"}}]}
   - name: fct_rwa_morpho_market_daily
+    description: Morpho markets whose collateral is a tokenized RWA, every chain, daily. The legacy worker's 9 Ethereum markets up to 2026-09-04; from 2026-09-05 every market whose collateral is in seeds/rwa_morpho_collateral.csv (source column says which). Fractions for lltv, utilization, borrow_apy.
     tests:
-      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, market_id]}
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, market_id]}
     columns:
       - {name: market_id, tests: [not_null]}
+      - {name: chain_id, tests: [not_null]}
+      - {name: source, tests: [{accepted_values: {values: ['legacy_worker', 'platform_morpho']}}]}
+      - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1.05, where: "utilization is not null and listed"}}]}
+      # Guard against broken markets reaching the headline: no single RWA market carries more than $5B of debt.
+      - {name: borrow_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
       - {name: collateral_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
   - name: fct_rwa_asset_aum_daily
+    description: AUM per tokenized asset per day on every chain it is issued on; aum_scope says how (issuer_api, all_chains, ethereum). See the model header.
     tests:
       - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, asset_id]}
     columns:
       - {name: asset_id, tests: [not_null]}
       # Stablecoins (USDC, GHO, RLUSD) are in this table too; USDC is ~$51B. Non-stablecoin rows are capped at $20B.
       - {name: aum_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 500000000000}}, {dbt_utils.accepted_range: {min_value: 0, max_value: 20000000000, where: "ticker not in ('USDC','GHO','RLUSD')"}}]}
+  - name: fct_rwa_euler_vault_daily
+    description: Euler v2 vaults in RWA clusters per day (role collateral, borrowable or candidate). Cluster = the Euler label product; curator = its entity. Candidates are RWA-looking assets outside seeds/rwa_euler_assets.csv and are never counted.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, vault]}
+    columns:
+      - {name: role, tests: [{accepted_values: {values: ['collateral', 'borrowable', 'candidate']}}]}
+      - {name: supply_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000, where: "supply_usd is not null"}}]}
+      - {name: asset_class, tests: [{not_null: {config: {where: "role = 'collateral'"}}}]}
+  - name: fct_rwa_euler_pair_daily
+    description: Euler lending pairs touching a tokenized RWA per day, with borrow and liquidation LTV (fractions) and the debt each collateral backs.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [day, chain_id, borrow_vault, collateral_vault]}
+    columns:
+      - {name: liquidation_ltv, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1}}]}
+      - {name: debt_backed_usd, tests: [{dbt_utils.accepted_range: {min_value: 0}}]}
+seeds:
+  - name: rwa_euler_assets
+    description: The RWA definition for Euler, by asset address per chain, built from Euler's labelled clusters on 2026-09-26. Midas crypto strategies and unverified issuers (pmUSD, USPC) are left out on purpose.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [chain_id, asset_address]}
+  - name: rwa_morpho_collateral
+    description: The RWA definition for Morpho. A market is RWA when its collateral address is here. Evidence column records how each address was verified (issuer contract, on-chain name, Backed registry, Morpho listing).
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [chain_id, collateral_address]}
+  - name: rwa_token_registry
+    description: Every chain a tracked tokenized asset is issued on, with a verified address, for all-chain supply.
+    tests:
+      - dbt_utils.unique_combination_of_columns: {combination_of_columns: [ticker, chain]}
+  - name: rwa_asset_meta
+    description: Asset class, issuer and AUM scope per tracked ticker; is_stablecoin splits the asset universe from its context.
+    columns:
+      - {name: ticker, tests: [unique, not_null]}

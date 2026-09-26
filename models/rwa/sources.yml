@@ -24,3 +24,18 @@ sources:
       - name: raw_asset
       - name: raw_token
       - name: raw_issuer
+      - name: raw_horizon_emode
+        description: Horizon e-mode categories read from the pool contract by scripts/ingest_rwa.py (rwa.horizon_emode).
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_token_supply
+        description: totalSupply per tokenized asset and chain from seeds/rwa_token_registry.csv (rwa.token_supply).
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_euler_vaults
+        description: Euler v2 RWA vaults from the Euler v3 API (rwa.euler).
+        loaded_at_field: fetched_at
+        freshness: {warn_after: {count: 3, period: hour}}
+      - name: raw_euler_collaterals
+        description: Accepted collaterals per Euler borrowable vault, with LTVs and debt backed (rwa.euler).
+        loaded_at_field: fetched_at
