@@ -16,7 +16,7 @@ step() { echo; echo "── $1"; }
 warn() { echo "::warning::$1"; }
 
 if [ "$CHECK" = 1 ]; then
-  echo "plan: migrate → sui ingest($([ $SKIP_SUI = 1 ] && echo skipped || echo "SuiLending@$(cat ingest/sui/SOURCE_REF)")) → rwa legacy sync → defillama → morpho → aave → centrifuge → dbt build → freshness → record → health"
+  echo "plan: migrate → sui ingest($([ $SKIP_SUI = 1 ] && echo skipped || echo "SuiLending@$(cat ingest/sui/SOURCE_REF)")) → rwa legacy sync → rwa direct (e-mode, supply, euler) → defillama → morpho → aave → centrifuge → dbt build → freshness → record → health"
   python -c "import dbt.version, psycopg2, pyarrow, boto3, requests, yaml; print('python deps ok; dbt', dbt.version.__version__)"
   node --version; exit 0
 fi
@@ -33,6 +33,7 @@ if [ "$SKIP_SUI" = 0 ]; then
 fi
 
 step "rwa legacy sync"; python scripts/import_legacy_rwa.py   || warn "RWA legacy sync had failures (see ops.legacy_imports)"
+step "rwa direct";      python scripts/ingest_rwa.py          || warn "RWA direct ingest (Horizon e-mode, token supply, Euler) had failures (see ops.sync_runs)"
 step "defillama (ref)"; python scripts/ingest_defillama.py    || warn "DefiLlama load had failures (see ops.sync_runs)"
 step "morpho";          python scripts/ingest_morpho.py       || warn "Morpho ingest had failures (see ops.sync_runs)"
 step "morpho positions"; python scripts/ingest_morpho_positions.py || warn "Morpho positions ingest had failures (see ops.sync_runs)"

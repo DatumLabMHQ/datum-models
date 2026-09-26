@@ -1,0 +1,12 @@
+ticker,asset_class,issuer,is_stablecoin,aum_scope
+USYC,US Treasuries,Circle (Hashnote),false,issuer_api
+USTB,US Treasuries,Superstate,false,issuer_api
+USCC,Crypto Carry,Superstate,false,issuer_api
+JTRSY,US Treasuries,Janus Henderson / Anemoy / Centrifuge,false,all_chains
+JAAA,Private Credit (CLO),Janus Henderson / Anemoy / Centrifuge,false,all_chains
+VBILL,US Treasuries,VanEck (Securitize),false,all_chains
+ACRED,Private Credit,Apollo (Securitize),false,all_chains
+mGLOBAL,Private Credit,Midas (Fasanara),false,all_chains
+USDC,Stablecoin,Circle,true,ethereum
+RLUSD,Stablecoin,Ripple,true,ethereum
+GHO,Stablecoin,Aave,true,ethereum

@@ -1,0 +1,70 @@
+chain_id,asset_address,symbol,asset_class,issuer,evidence
+1,0x015c477a4e2881c4b3bb8999f59ee4a04e812344,HINC,Private Credit,Neuberger Berman (Securitize),Euler labels: Securitize RWA Collateral; asset name Neuberger Securitize High Income Tokenized Fund
+1,0x01ba69727e2860b37bc1a2bd56999c1afb4c15d8,ynRWAx,Multi-asset RWA,YieldNest,Euler labels: YieldNest Max Vaults; asset name YieldNest RWA MAX
+1,0x0b2456017c5df2dfc0289740c4b352049892780c,wSTRCx,Stocks,xStocks (Backed),Euler labels: Cassa RWA; asset name Wrapped Strategy PP Variable xStock
+1,0x1204371ac0e5176f4b8c5b2f16c2bec551b6fc1a,HYBOND,Fixed Income,OpenEden (BNY high-yield bond fund),Euler labels: Clearstar OpenEden Hybond; asset name Tokenized BNY High-yield Bond Fund
+1,0x1296ea461ff7894e000c75d97d74d0ee0589971a,ps-mGLOBAL,Private Credit,Midas (Fasanara),Euler labels: Keyring Institutional Cluster; asset name Pending Settlement mGLOBAL
+1,0x2255718832bc9fd3be1caf75084f4803da14ff01,VBILL,US Treasuries,VanEck (Securitize),Euler labels: Securitize RWA Collateral; asset name VanEck Treasury Fund
+1,0x45804880de22913dafe09f4980848ece6ecbaf78,PAXG,Commodities (Gold),Paxos,Euler labels: AlphaGrowth Mainnet RWA; asset name Paxos Gold
+1,0x5086bf358635b81d8c47c66d1c8b9e567db70c72,reUSD,Reinsurance,Re Protocol,Euler labels: AlphaGrowth Mainnet RWA; asset name Re Protocol Deposit Token
+1,0x51c2d74017390cbbd30550179a16a1c28f7210fc,STAC,Private Credit (CLO),Securitize,Euler labels: Securitize RWA Collateral; asset name Securitize Tokenized AAA CLO Fund
+1,0x68749665ff8d2d112fa859aa293f07a622782f38,XAUt,Commodities (Gold),Tether,Euler labels: K3 Capital Prime Market; asset name Tether Gold
+1,0x6a547b25534234bb79ce6961a23db13de154b6f4,tGLD,Commodities (Gold),Tenbin,Euler labels: JPEG Trading x Tenbin RWAs; asset name Tenbin Gold
+1,0x7433806912eae67919e66aea853d46fa0aef98a8,mGLOBAL,Private Credit,Midas (Fasanara),Euler labels: Keyring Institutional Cluster; asset name Midas Fasanara Global
+1,0xddc0f880ff6e4e22e4b74632fbb43ce4df6ccc5a,reUSDe,Reinsurance,Re Protocol,Euler labels: AlphaGrowth Mainnet RWA; asset name Re Protocol reUSDe
+1,0xe7e553cd128f0011777323a0b44a7b96ea1cb540,wSPYx,Stocks,xStocks (Backed),Euler labels: Cassa RWA; asset name Wrapped SP500 xStock
+1,0xecfafdc7741323a945a163ed068b5a3c43483957,PT-reUSD-10DEC2026,Reinsurance,Re Protocol (Pendle PT),Euler labels: Cassa RWA; asset name PT reUSD 10DEC2026
+143,0x0143c3ef3a76ed825fd5201953f65b52acefd799,gAUSD,Private Credit,K3 x Galaxy,Euler labels: K3 Isolated gAUSD-AUSD; asset name K3 x Galaxy Lending
+143,0x8d3f9f9eb2f5e8b48efbb4074440d1e2a34bc365,vUSD,Private Credit,Valos,Euler labels: Valos vUSD/AUSD Market; asset name RWA Backed Lending by Valos
+42161,0xe46271ecb1d5c7c5134868760f10c18b03021ef1,PT-thBILL-18JUN2026,US Treasuries,Theo (Pendle PT),Euler labels: K3 Capital Theo Market; asset name PT thBILL 18JUN2026
+42161,0xfdd22ce6d1f66bc0ec89b20bf16ccb6670f55a5a,thBILL,US Treasuries,Theo,Euler labels: K3 Capital Theo Market; asset name thBILL
+56,0x02fca66c1d1afb4e2a7884261eb00f63598a7436,NVDAB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated NVDAB-USDT; asset name NVIDIA Corp
+56,0x03e4bd1ea53f1da84513da0319d1f03dd1bbcf93,ORCLon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Oracle (Ondo Tokenized)
+56,0x091fc7778e6932d4009b087b191d1ee3bac5729a,GOOGLon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Alphabet Class A (Ondo Tokenized)
+56,0x0cde6936d305d5b34667fc46425e852efd73559a,QQQon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Invesco QQQ (Ondo Tokenized)
+56,0x12b7adc48416a103f63e7e6210f62c81dfb91fd0,EWYon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name iShares MSCI South Korea ETF (Ondo Tokenized)
+56,0x19601179a60f55ff6636f5d1a8b6671053bd60a8,HOODon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Robinhood Markets (Ondo Tokenized)
+56,0x1d7b5e06fdbe4fd33f5c64c081e32b5d539751d0,AMCon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name AMC Entertainment (Ondo Tokenized)
+56,0x205812cdbed920aff76c6580abd681a46d11efc7,QQQB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated QQQB-USDT; asset name Invesqo QQQ
+56,0x2494b603319d4d9f9715c9f4496d9e0364b59d93,TSLAon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Tesla (Ondo Tokenized)
+56,0x390a684ef9cade28a7ad0dfa61ab1eb3842618c4,AAPLon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Apple (Ondo Tokenized)
+56,0x3ee4df61bd4f867e349beae8bfe07bc31b4850fb,SNDKB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated SNDKB-USDT; asset name Sandisk Corporation
+56,0x40d8e1fbaf69173c47fa493feb50a84eec6b57ee,IONQon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name IonQ (Ondo Tokenized)
+56,0x4553cfe1c09f37f38b12dc509f676964e392f8fc,AMZNon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Amazon (Ondo Tokenized)
+56,0x4fd67cb8cfedc718bac984b5936abe3330d0a2a4,SNDKon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name SanDisk (Ondo Tokenized)
+56,0x52ad57a7ea642e99a892afc79e937b383f1b59e9,BMNRon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name BitMine Immersion Technologies (Ondo Tokenized)
+56,0x6a708ead771238919d85930b5a0f10454e1c331a,SPYon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name SPDR S&P 500 ETF (Ondo Tokenized)
+56,0x6bfe75d1ad432050ea973c3a3dcd88f02e2444c3,MSFTon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Microsoft (Ondo Tokenized)
+56,0x7048f5227b032326cc8dbc53cf3fddd947a2c757,NFLXon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Netflix (Ondo Tokenized)
+56,0x7138b48df7d98d7e3cc221bfe7192d0a178182d8,SPYB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated SPYB-USDT; asset name SPY
+56,0x71e9dc9debc18650bd2342b93623b88c2ad00c89,STRCon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Strategy Stretch Preferred (Ondo Tokenized)
+56,0x7313ea16493b2f55054df0131a3a14b043ec8992,MSTRon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name MicroStrategy (Ondo Tokenized)
+56,0x76e39171cb665a35981e744e2ceb7012f76caeac,CRWVon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name CoreWeave (Ondo Tokenized)
+56,0x80106cb3ead06659a5ad19df39d9b4733863b9b0,MSFTB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated MSFTB-USDT; asset name Microsoft
+56,0x8b6acf6041a81567f012ff6a4c6d96d5818d74bf,MUon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Micron Technology (Ondo Tokenized)
+56,0x8b872732b07be325a8803cdb480d9d20b6f8d11b,SLVon,Commodities (Silver),Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name iShares Silver Trust (Ondo Tokenized)
+56,0x9351abd19f42101dd36025e495b98e910b255d78,PLTRon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Palantir Technologies (Ondo Tokenized)
+56,0x94174e3d1335db402dd03a092f7aa7ac2cb32be4,USOon,Commodities (Oil),Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name United States Oil Fund (Ondo Tokenized)
+56,0x992879cd8ce0c312d98648875b5a8d6d042cbf34,CRCLon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Circle Internet Group (Ondo Tokenized)
+56,0x9f16e46c73b43bdb70861247d537bee4ea18f639,AMDon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name AMD (Ondo Tokenized)
+56,0xa528caaa2f96090e379d43f90834c75df54d6e74,INTCon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Intel (Ondo Tokenized)
+56,0xa9ee28c80f960b889dfbd1902055218cba016f75,NVDAon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name NVIDIA (Ondo Tokenized)
+56,0xaf6c03acf72355ce98d0741302b78870b376428c,OKLOon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Oklo (Ondo Tokenized)
+56,0xb034f6cb52b7f2fd5a7eeeffca6b9adcd6b9a6f6,ASMLon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name ASML Holding NV (Ondo Tokenized)
+56,0xb4d695569236273745b4cd54b539b1b9cc1513af,RKLBon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Rocket Lab (Ondo Tokenized)
+56,0xbe9d156892e55e7154bcd3cb0fea677f9d3103e1,SPCXB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated SPCXB-USDT; asset name SpaceX
+56,0xc37042a7a4fa510d8884a433762ab87257b91965,TSMon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Taiwan Semiconductor Manufacturing (Ondo Tokenized)
+56,0xcb2a0f46f67dc4c58a316f1c008edef5c2311795,IAUon,Commodities (Gold),Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name iShares Gold Trust (Ondo Tokenized)
+56,0xcdf2f3e0fa43c47a6662a91c9e4a7c5f69762699,MUB,Stocks,"bStocks (Binance), inferred from naming",Euler labels: K3 Isolated MUB-USDT; asset name Micron Technology Inc
+56,0xd0a58bc9d88d3ff48c0294cb7e45937d0e41a928,SPCXon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name SpaceX (Ondo Tokenized)
+56,0xd5964f3fcee8d649995ab88f04b8982539c282d2,BABAon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Alibaba (Ondo Tokenized)
+56,0xd7df5863a3e742f0c767768cdfcb63f09e0422f6,METAon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Meta Platforms (Ondo Tokenized)
+56,0xee268780473e7a0e47bac41547c6e01512555a16,NBISon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Nebius Group (Ondo Tokenized)
+56,0xf69e40069ac227c11459e3f4e8a446b3401616b6,TLTon,US Treasuries,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name iShares 20+ Year Treasury Bond ETF (Ondo Tokenized)
+56,0xf8589b526fdd65f7f301c605a6e04f0f1b4b3620,COINon,Stocks,Ondo Global Markets,Euler labels: Poppie Ondo Markets; asset name Coinbase (Ondo Tokenized)
+8453,0x31c2c14134e6e3b7ef9478297f199331133fc2d8,wtSPYM,Stocks,ST0x,Euler labels: AlphaGrowth Base RWA; asset name Wrapped State Street SPDR Portfolio S&P 500 ETF ST0x
+8453,0x5cda0e1ca4ce2af96315f7f8963c85399c172204,wtCOIN,Stocks,ST0x,Euler labels: AlphaGrowth Base RWA; asset name Wrapped Coinbase Global Inc ST0x
+8453,0x7d214438d0f27afccc23b3d1e1a53906ace5cfea,reUSD,Reinsurance,Re Protocol,Euler labels: AlphaGrowth Base RWA; asset name Re Protocol reUSD
+8453,0x9c5c365e764829876243d0b289733b9d2b729685,deSPXA,Stocks,Centrifuge deRWA (S&P 500),Euler labels: Clearstar RWA; asset name S&P 500 DeFi (Centrifuge)
+8453,0xaaa0008c8cf3a7dca931adaf04336a5d808c82cc,deJAAA,Private Credit (CLO),Janus Henderson / Anemoy / Centrifuge (deRWA),Euler labels: Clearstar RWA; asset name JAAA deRWA
+8453,0xff05e1bd696900dc6a52ca35ca61bb1024eda8e2,wtMSTR,Stocks,ST0x,Euler labels: AlphaGrowth Base RWA; asset name Wrapped MicroStrategy Incorporated ST0x

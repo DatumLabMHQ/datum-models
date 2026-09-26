@@ -1,0 +1,12 @@
+ticker,chain,address,decimals,evidence
+ACRED,1,0x17418038ecf73ba4026c4f428547bf099706f27b,6,legacy registry; symbol() ACRED
+ACRED,57073,0x53ad50d3b6fcacb8965d3a49cb722917c7dae1f3,6,CoinGecko platforms; symbol() ACRED on Ink 2026-09-26
+ACRED,137,0xfce60bbc52a5705cec5b445501fbaf3274dc43d0,6,CoinGecko platforms; symbol() ACRED on Polygon 2026-09-26
+ACRED,43114,0x7c64925002bfa705834b118a923e9911bee32875,6,CoinGecko platforms; symbol() ACRED on Avalanche 2026-09-26
+ACRED,solana,FubtUcvhSCr3VPXEcxouoQjKQ7NWTCzXyECe76B7L3f8,6,CoinGecko platforms; getTokenSupply 2026-09-26
+VBILL,1,0x2255718832bc9fd3be1caf75084f4803da14ff01,6,legacy registry; symbol() VBILL
+VBILL,56,0x14d72634328c4d03bba184a48081df65f1911279,6,CoinGecko platforms; symbol() VBILL on BNB 2026-09-26
+VBILL,43114,0x7f4546ef315efc65336187fe3765ea779ac90183,6,CoinGecko platforms; symbol() VBILL on Avalanche 2026-09-26
+VBILL,solana,34mJztT9am2jybSukvjNqRjgJBZqHJsHnivArx1P4xy1,6,CoinGecko platforms; getTokenSupply 2026-09-26
+mGLOBAL,1,0x7433806912eae67919e66aea853d46fa0aef98a8,18,Horizon reserve; symbol() mGLOBAL
+mGLOBAL,43114,0x25c2067d8b04931a6e2eb078ea8d65c8b8500031,18,CoinGecko platforms; symbol() mGLOBAL on Avalanche (supply 0 on 2026-09-26)

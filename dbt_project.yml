@@ -48,3 +48,18 @@ models:
         +materialized: view
       marts:
         +materialized: table
+
+seeds:
+  datum_models:
+    rwa_morpho_collateral:
+      +schema: rwa
+      +column_types: {chain_id: integer, collateral_address: text, symbol: text, asset_class: text, issuer: text, evidence: text}
+    rwa_token_registry:
+      +schema: rwa
+      +column_types: {ticker: text, chain: text, address: text, decimals: integer, evidence: text}
+    rwa_asset_meta:
+      +schema: rwa
+      +column_types: {ticker: text, asset_class: text, issuer: text, is_stablecoin: boolean, aum_scope: text}
+    rwa_euler_assets:
+      +schema: rwa
+      +column_types: {chain_id: integer, asset_address: text, symbol: text, asset_class: text, issuer: text, evidence: text}
