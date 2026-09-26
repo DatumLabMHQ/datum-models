@@ -45,6 +45,8 @@ models:
       - {name: chain_id, tests: [not_null]}
       - {name: source, tests: [{accepted_values: {values: ['legacy_worker', 'platform_morpho']}}]}
       - {name: utilization, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 1.05, where: "utilization is not null and listed"}}]}
+      # Guard against broken markets reaching the headline: no single RWA market carries more than $5B of debt.
+      - {name: borrow_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
       - {name: collateral_usd, tests: [{dbt_utils.accepted_range: {min_value: 0, max_value: 5000000000}}]}
   - name: fct_rwa_asset_aum_daily
     description: AUM per tokenized asset per day on every chain it is issued on; aum_scope says how (issuer_api, all_chains, ethereum). See the model header.

@@ -18,6 +18,9 @@ with legacy as (
   from {{ ref('fct_morpho_market_daily') }} m
   join {{ ref('rwa_morpho_collateral') }} s on s.chain_id = m.chain_id and s.collateral_address = lower(m.collateral_address)
   where m.day >= date '{{ native_from }}' {% if is_incremental() %} and m.day >= {{ since }} {% endif %}
+    -- Unlisted markets are kept only when they look like real markets: debt no larger than the collateral behind it.
+    -- An unlisted PAXG/USDC market reported $10.6B of debt against no collateral on 2026-09-26 (broken oracle or test market).
+    and (m.listed or coalesce(m.borrow_assets_usd, 0) <= coalesce(m.collateral_assets_usd, 0))
 )
 select day, ts as as_of, 1 as chain_id, market_id, true as listed, collateral_symbol, null::text as collateral_address, loan_symbol, asset_class, null::text as issuer,
        lltv, collateral_usd, borrow_usd, null::double precision as supply_usd, utilization, borrow_apy, 'legacy_worker' as source
