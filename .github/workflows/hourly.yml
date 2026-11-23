@@ -33,6 +33,12 @@ jobs:
           SUI_GRPC_BEARER: ${{ secrets.SUI_GRPC_BEARER }}
           CENTRIFUGE_API_URL: https://centrifuge-rwa-dashboard.datumlabs.workers.dev/api/graph-proxy
           CENTRIFUGE_PROXY_KEY: ${{ secrets.CENTRIFUGE_PROXY_KEY }}
+          # Known upstream breakages that warn instead of failing the run (so the owner is not emailed
+          # every hour for the same thing). Remove an entry once its fix lands:
+          #   centrifuge               proxy answers 401 (CENTRIFUGE_PROXY_KEY no longer matches the Worker)
+          #   rwa.euler / euler_v3_api Euler API dropped chain 137 (Polygon)
+          #   sui.collect_pools.scallop / scallop_indexer  Scallop adapter returns no pools
+          HEALTH_WARN_ONLY: centrifuge,rwa.euler,rwa/euler_v3_api,sui.collect_pools.scallop,sui/scallop_indexer
         run: bin/hourly.sh
       - uses: actions/upload-artifact@v4
         if: always()
