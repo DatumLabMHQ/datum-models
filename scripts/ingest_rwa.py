@@ -139,6 +139,14 @@ if ALL or a.euler:
         products = {(p['chainId'], p['id']): p for p in pages('labels/products')}
         labels = {(v['chainId'], v['address'].lower()): v for v in pages('labels/vaults')}
         entities = {e['id']: e['name'] for e in pages('labels/entities')}
+        # Euler drops chains from its API (137, Polygon, went in November 2026), and one dropped chain
+        # answering 404 used to fail the whole job. Ask which chains it serves and skip the rest out loud.
+        served = euler('chains')
+        served = {int(x['id']) for x in (served.get('data', served) if isinstance(served, dict) else served)
+                  if x.get('status', 'active') == 'active'}
+        dropped = [c for c in CHAINS if c not in served]
+        if dropped: print(f'::warning::Euler API no longer serves chain(s) {dropped}; skipped')
+        CHAINS = [c for c in CHAINS if c in served]
         vaults = {}
         for c in CHAINS:
             for v in pages('evk/vaults', {'chainId': c, 'visibility': 'visible,warning,hidden,pending_review'}): vaults[(c, v['address'].lower())] = v

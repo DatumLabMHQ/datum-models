@@ -9,7 +9,8 @@ import requests, psycopg2, psycopg2.extras
 
 # api.centrifuge.io answers US-east callers (GitHub runners, Vercel iad1) with 520/524 on real queries.
 # CENTRIFUGE_API_URL can point at the keyed pass-through on the London Vercel deployment instead.
-API = os.environ.get('CENTRIFUGE_API_URL') or 'https://api.centrifuge.io/'
+DIRECT = 'https://api.centrifuge.io/'
+API = os.environ.get('CENTRIFUGE_API_URL') or DIRECT
 HEADERS = {'x-proxy-key': os.environ['CENTRIFUGE_PROXY_KEY']} if os.environ.get('CENTRIFUGE_PROXY_KEY') else {}
 p = argparse.ArgumentParser()
 for x in ('pools', 'transactions', 'history'): p.add_argument(f'--{x}', action='store_true')
@@ -20,11 +21,18 @@ conn = psycopg2.connect(url); cur = conn.cursor()
 RUNNER = 'github-actions' if os.environ.get('GITHUB_ACTIONS') else 'local'
 
 def gql(query, variables, tries=4):
+    global API, HEADERS
     last = None
     for i in range(tries):
         try:
             r = requests.post(API, json={'query': query, 'variables': variables}, headers=HEADERS, timeout=90); last = r
             if r.status_code == 200 and 'errors' not in r.json(): return r.json()['data']
+            # A key the proxy no longer accepts will not start working on a retry. Go straight to the
+            # public API for the rest of the run, and say so, so the key gets fixed.
+            if r.status_code in (401, 403) and API != DIRECT:
+                print(f'::warning::Centrifuge proxy answered {r.status_code}; CENTRIFUGE_PROXY_KEY no longer matches. Using {DIRECT} directly.')
+                API, HEADERS = DIRECT, {}
+                continue
         except requests.RequestException as e:
             last = e
         time.sleep(3 * (i + 1))
