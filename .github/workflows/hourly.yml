@@ -35,10 +35,10 @@ jobs:
           CENTRIFUGE_PROXY_KEY: ${{ secrets.CENTRIFUGE_PROXY_KEY }}
           # Known upstream breakages that warn instead of failing the run (so the owner is not emailed
           # every hour for the same thing). Remove an entry once its fix lands:
-          #   centrifuge               proxy answers 401 (CENTRIFUGE_PROXY_KEY no longer matches the Worker)
-          #   rwa.euler / euler_v3_api Euler API dropped chain 137 (Polygon)
-          #   sui.collect_pools.scallop / scallop_indexer  Scallop adapter returns no pools
-          HEALTH_WARN_ONLY: centrifuge,rwa.euler,rwa/euler_v3_api,sui.collect_pools.scallop,sui/scallop_indexer
+          #   centrifuge               proxy answers 401 (CENTRIFUGE_PROXY_KEY no longer matches the Worker).
+          #                            The ingest now falls back to api.centrifuge.io; remove this entry once
+          #                            a run on the GitHub runner succeeds that way, or once the key is fixed.
+          HEALTH_WARN_ONLY: centrifuge
         run: bin/hourly.sh
       - uses: actions/upload-artifact@v4
         if: always()
