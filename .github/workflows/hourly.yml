@@ -34,11 +34,10 @@ jobs:
           CENTRIFUGE_API_URL: https://centrifuge-rwa-dashboard.datumlabs.workers.dev/api/graph-proxy
           CENTRIFUGE_PROXY_KEY: ${{ secrets.CENTRIFUGE_PROXY_KEY }}
           # Known upstream breakages that warn instead of failing the run (so the owner is not emailed
-          # every hour for the same thing). Remove an entry once its fix lands:
-          #   centrifuge               proxy answers 401 (CENTRIFUGE_PROXY_KEY no longer matches the Worker).
-          #                            The ingest now falls back to api.centrifuge.io; remove this entry once
-          #                            a run on the GitHub runner succeeds that way, or once the key is fixed.
-          HEALTH_WARN_ONLY: centrifuge
+          # every hour for the same thing), as a comma-separated list: a product (centrifuge), a job
+          # (rwa.euler) or a product/source pair (sui/scallop_indexer). Write the cause beside each
+          # entry, and remove it once its fix lands. None are known today.
+          HEALTH_WARN_ONLY: ""
         run: bin/hourly.sh
       - uses: actions/upload-artifact@v4
         if: always()
